@@ -19,6 +19,7 @@ import {
 } from "../firebase/crudoperations";
 import { useNavigate } from "react-router-dom";
 
+
 function CustomCocktail() {
   const [ingredient1, setIngredient1] = useState("");
   const [ingredient2, setIngredient2] = useState("");
@@ -36,7 +37,7 @@ function CustomCocktail() {
     currentUser && setCartQty(calcItemQty(currentUser));
   }, [currentUser, cartChanged]);
 
-  let obj = {
+  const obj = {
     idDrink:
       ingredient1 + ingredient2 + ingredient3 + ingredient4 + cocktailName,
     price:
@@ -79,39 +80,21 @@ function CustomCocktail() {
     setCartChanged([]);
   };
 
-  function handleSubmit() {
+	function handleSubmit(event) {
     if (!currentUser) {
       return setError("Please Sign In");
-    }
-    if (
-      ingredient1.length < 1 ||
-      ingredient2.length < 1 ||
-      cocktailName.length < 1
+	  }
+	  const name = cocktailName ? "" : "COCkTAIL NAME";
+	  const ing1 = ingredient1 ? "" : "INGREDIENT 1";
+	  const ing2 = ingredient2 ? "" : "INGREDIENT 2";
+	  const isOrAre = [name, ing1, ing2].filter(elem => elem).length > 1 ? "ARE" : "IS";
+    if (!ingredient1 || !ingredient2 || !cocktailName
     ) {
-      return setError(
-        "COCkTAIL NAME , INGREDIENT 1 AND INGREDIENT 2 ARE REQUIRED"
-      );
+      return setError(`${name} ${ing1} ${ing2} ${isOrAre} REQUIRED`);
     }
-    addItemToCart(obj);
-    setError("Congratulations! You have made a new cocktail");
+	setError("Congratulations! You have made a new cocktail");
+	event.target.innerText === "ADD TO CART" ? addItemToCart(obj) : setTimeout(() => navigate("/payment"),2000);
   }
-
-   function handleOrder() {
-			if (!currentUser) {
-				return setError("Please Sign In");
-			}
-			if (
-				ingredient1.length < 1 ||
-				ingredient2.length < 1 ||
-				cocktailName.length < 1
-			) {
-				return setError(
-					"COCkTAIL NAME , INGREDIENT 1 AND INGREDIENT 2 ARE REQUIRED"
-				);
-			}
-			navigate("/payment");
-		}
-
 
   function onClean() {
     setIngredient1("");
@@ -124,7 +107,7 @@ function CustomCocktail() {
 
   return (
 		<div>
-			<NavBar showDrawer={false} mainPage={false} cartQty={cartQty} searchCocktil={0}/>
+			<NavBar showDrawer={false} cartQty={cartQty} />
 			<Container maxWidth="sm">
 				{error[2] === "n" ? (
 					<div>
@@ -169,12 +152,7 @@ function CustomCocktail() {
 						getOptionLabel={(option) => option.ingredient}
 						style={{ width: 250, padding: "15px 0px" }}
 						renderInput={(params) => (
-							<TextField
-								{...params}
-								label="INGREDIENT 1"
-								variant="outlined"
-								color="secondary"
-							/>
+							<TextField {...params} label="INGREDIENT 1" variant="outlined" color="secondary" />
 						)}
 					/>
 					<Autocomplete
@@ -188,12 +166,7 @@ function CustomCocktail() {
 						getOptionLabel={(option) => option.ingredient}
 						style={{ width: 250, padding: "15px 0px" }}
 						renderInput={(params) => (
-							<TextField
-								{...params}
-								label="INGREDIENT 2"
-								variant="outlined"
-								color="secondary"
-							/>
+							<TextField {...params} label="INGREDIENT 2" variant="outlined" color="secondary" />
 						)}
 					/>
 					<Autocomplete
@@ -225,12 +198,7 @@ function CustomCocktail() {
 						)}
 					/>
 				</div>
-				<img
-					width="30%"
-					style={{ padding: "0px 50px" }}
-					src="/images/cocktail1.jpg"
-					alt="custom"
-				/>
+				<img width="30%" style={{ padding: "0px 50px" }} src="/images/cocktail1.jpg" alt="custom" />
 
 				<div style={{ padding: "0px 50px", width: "150px" }}>
 					<Button
@@ -252,7 +220,7 @@ function CustomCocktail() {
 						<HighlightOffIcon fontSize="large" />
 					</Button>
 					<Button
-						onClick={handleOrder}
+						onClick={handleSubmit}
 						color="primary"
 						variant="contained"
 						fullWidth

@@ -254,7 +254,7 @@ export default function CocktailCards() {
 				<NavBar
 					searchCocktail={searchCocktail}
 					setSearchCocktil={setSearchCocktil}
-					mainPage={true}
+					mainPage
 					fetchData={data}
 					popularIngsSwitch={popularIngsSwitch}
 					popularCocktailsSwitch={popularCocktailsSwitch}
