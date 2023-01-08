@@ -69,65 +69,68 @@ export default function CocktailCards() {
 	}, [data, popularCocktails, filteredApi]);
 
 	useEffect(() => {
-		let each = [];
-		let letters = "abcdefghijklmnopqrstuvwxyz0123456789";
-		let urls = [];
-		for (let letter of letters) {
-			urls.push("https://thecocktaildb.com/api/json/v1/1/search.php?f=" + letter);
-		}
-		let requests = urls.map((url) => fetch(url));
-		Promise.all(requests)
-			.then((responses) => Promise.all(responses.map((item) => item.json())))
-			.then((items) => {
-				items.forEach((item) => {
-					if (item.drinks !== null) each = each.concat(item.drinks);
-				});
-				for (let cocktail of each) {
-					let ingPrice1 = PRICES.hasOwnProperty(cocktail.strIngredient1)
-						? PRICES[cocktail.strIngredient1]
-						: 3;
-					let ingPrice2 = PRICES.hasOwnProperty(cocktail.strIngredient2)
-						? PRICES[cocktail.strIngredient2]
-						: 3;
-					let ingPrice3 = PRICES.hasOwnProperty(cocktail.strIngredient3)
-						? PRICES[cocktail.strIngredient3]
-						: cocktail.strIngredient3 === null
-						? 0
-						: 3;
-					let ingPrice4 = PRICES.hasOwnProperty(cocktail.strIngredient4)
-						? PRICES[cocktail.strIngredient4]
-						: cocktail.strIngredient4 === null
-						? 0
-						: 3;
-					let ingPrice5 = PRICES.hasOwnProperty(cocktail.strIngredient5)
-						? PRICES[cocktail.strIngredient5]
-						: cocktail.strIngredient5 === null
-						? 0
-						: 3;
-					let ingPrice6 = PRICES.hasOwnProperty(cocktail.strIngredient6)
-						? PRICES[cocktail.strIngredient6]
-						: cocktail.strIngredient6 === null
-						? 0
-						: 3;
-					cocktail.price = ingPrice1 + ingPrice2 + ingPrice3 + ingPrice4 + ingPrice5 + ingPrice6;
-				}
-				setPopularCocktails([
-					each[66],
-					each[84],
-					each[275],
-					each[228],
-					each[51],
-					each[47],
-					each[256],
-					each[268],
-					each[237],
-					each[96],
-					each[405],
-					each[236],
-				]);
-				setData(each);
-			});
+		getAllCocktails();
 	}, []);
+
+	async function getAllCocktails() {
+		const mainURL = "https://thecocktaildb.com/api/json/v1/1/search.php?f=";
+		let each = [];
+		const letters = "abcdefghijklmnopqrstuvwxyz0123456789";
+		const urls = [];
+		for (const letter of letters) {
+			urls.push(mainURL + letter);
+		}
+		const requests = urls.map(async (url) => await fetch(url));
+		const response = await Promise.all(requests);
+		const allCocktails = await Promise.all(response.map((item) => item.json()));
+		allCocktails.forEach((item) => {
+			if (item.drinks !== null) each = each.concat(item.drinks);
+		});
+		for (const cocktail of each) {
+			const ingPrice1 = PRICES.hasOwnProperty(cocktail.strIngredient1)
+				? PRICES[cocktail.strIngredient1]
+				: 3;
+			const ingPrice2 = PRICES.hasOwnProperty(cocktail.strIngredient2)
+				? PRICES[cocktail.strIngredient2]
+				: 3;
+			const ingPrice3 = PRICES.hasOwnProperty(cocktail.strIngredient3)
+				? PRICES[cocktail.strIngredient3]
+				: cocktail.strIngredient3 === null
+				? 0
+				: 3;
+			const ingPrice4 = PRICES.hasOwnProperty(cocktail.strIngredient4)
+				? PRICES[cocktail.strIngredient4]
+				: cocktail.strIngredient4 === null
+				? 0
+				: 3;
+			const ingPrice5 = PRICES.hasOwnProperty(cocktail.strIngredient5)
+				? PRICES[cocktail.strIngredient5]
+				: cocktail.strIngredient5 === null
+				? 0
+				: 3;
+			const ingPrice6 = PRICES.hasOwnProperty(cocktail.strIngredient6)
+				? PRICES[cocktail.strIngredient6]
+				: cocktail.strIngredient6 === null
+				? 0
+				: 3;
+			cocktail.price = ingPrice1 + ingPrice2 + ingPrice3 + ingPrice4 + ingPrice5 + ingPrice6;
+		}
+		setPopularCocktails([
+			each[66],
+			each[84],
+			each[275],
+			each[228],
+			each[51],
+			each[47],
+			each[256],
+			each[268],
+			each[237],
+			each[96],
+			each[405],
+			each[236],
+		]);
+		setData(each);
+	}
 
 	useEffect(() => {
 		if (filteredApi.length && !resultSearchCocktail.length) {
@@ -147,8 +150,8 @@ export default function CocktailCards() {
 		}
 	}, [data, popularCocktails, filteredApi, resultSearchCocktail, searchCocktail.length]);
 
-	const addItemToCart = (card, func) => {
-		onAdd(card, func);
+	const addItemToCart = (cocktail, onDouble) => {
+		onAdd(cocktail, onDouble);
 		setCartQty(cartQty + 1);
 		setCartChanged([]);
 	};
@@ -226,70 +229,70 @@ export default function CocktailCards() {
 					</Typography>
 					<Container className={classes.cardGrid} maxWidth="md">
 						<Grid container spacing={4}>
-							{show.map((card) => (
-								<Grid item key={card.idDrink} xs={12} sm={6} md={4}>
+							{show.map((cocktail) => (
+								<Grid item key={cocktail.idDrink} xs={12} sm={6} md={4}>
 									<Card className={classes.card}>
 										<CardActionArea>
 											<CardMedia
 												className={classes.cardMedia}
-												image={card.strDrinkThumb}
-												title={card.strDrink}
+												image={cocktail.strDrinkThumb}
+												title={cocktail.strDrink}
 												onClick={() => {
-													setSelectItem(card);
+													setSelectItem(cocktail);
 													setDialog1Open(true);
 												}}
 											/>
 										</CardActionArea>
 										<CardContent className={classes.cardContent}>
 											<Typography gutterBottom variant="h5" component="h2">
-												{card.strDrink}
+												{cocktail.strDrink}
 											</Typography>
 
-											<Typography>{card.strCategory}</Typography>
+											<Typography>{cocktail.strCategory}</Typography>
 										</CardContent>
-										{currentUser && card.strAlcoholic === "Alcoholic" && (
+										{currentUser && cocktail.strAlcoholic === "Alcoholic" && (
 											<Button
-												onClick={() => addItemToCart(card, onDouble)}
+												onClick={() => addItemToCart(cocktail, onDouble)}
 												color="primary"
 												variant="outlined"
 												style={{ marginLeft: "10px", marginRight: "10px" }}
 											>
 												{ing
 													? "Double <<" + ing + ">>  /+$" + PRICES[ing] + ".00"
-													: !NONALCOHOLIC.hasOwnProperty(card.strIngredient1)
+													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient1)
 													? "Double <<" +
-													  card.strIngredient1 +
+													  cocktail.strIngredient1 +
 													  ">>  /+$" +
-													  PRICES[card.strIngredient1] +
+													  PRICES[cocktail.strIngredient1] +
 													  ".00"
-													: !NONALCOHOLIC.hasOwnProperty(card.strIngredient2)
+													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient2)
 													? "Double <<" +
-													  card.strIngredient2 +
+													  cocktail.strIngredient2 +
 													  ">>  /+$" +
-													  PRICES[card.strIngredient2] +
+													  PRICES[cocktail.strIngredient2] +
 													  ".00"
-													: !NONALCOHOLIC.hasOwnProperty(card.strIngredient3)
+													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient3)
 													? "Double <<" +
-													  card.strIngredient3 +
+													  cocktail.strIngredient3 +
 													  ">>  /+$" +
-													  PRICES[card.strIngredient3] +
+													  PRICES[cocktail.strIngredient3] +
 													  ".00"
-													: !NONALCOHOLIC.hasOwnProperty(card.strIngredient4)
+													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient4)
 													? "Double <<" +
-													  card.strIngredient4 +
+													  cocktail.strIngredient4 +
 													  ">>  /+$" +
-													  PRICES[card.strIngredient4] +
+													  PRICES[cocktail.strIngredient4] +
 													  ".00"
-													: !NONALCOHOLIC.hasOwnProperty(card.strIngredient5)
+													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient5)
 													? "Double <<" +
-													  card.strIngredient5 +
+													  cocktail.strIngredient5 +
 													  ">>  /+$" +
-													  PRICES[card.strIngredient5] +
+													  PRICES[cocktail.strIngredient5] +
 													  ".00"
 													: "Double <<" +
-													  card.strIngredient6 +
+													  cocktail.strIngredient6 +
 													  ">>  /+$" +
-													  PRICES[card.strIngredient6] +
+													  PRICES[cocktail.strIngredient6] +
 													  ".00"}
 											</Button>
 										)}
@@ -297,7 +300,7 @@ export default function CocktailCards() {
 											{currentUser ? (
 												<>
 													<Button
-														onClick={() => addItemToCart(card)}
+														onClick={() => addItemToCart(cocktail)}
 														size="small"
 														color="primary"
 														variant="outlined"
@@ -318,7 +321,7 @@ export default function CocktailCards() {
 												<LoginSignUp />
 											)}
 											<Grid item>
-												<Typography variant="button">${card.price}.00</Typography>{" "}
+												<Typography variant="button">${cocktail.price}.00</Typography>{" "}
 											</Grid>
 										</CardActions>
 									</Card>
