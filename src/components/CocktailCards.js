@@ -74,7 +74,6 @@ export default function CocktailCards() {
 
 	async function getAllCocktails() {
 		const mainURL = "https://thecocktaildb.com/api/json/v1/1/search.php?f=";
-		let each = [];
 		const letters = "abcdefghijklmnopqrstuvwxyz0123456789";
 		const urls = [];
 		for (const letter of letters) {
@@ -82,54 +81,50 @@ export default function CocktailCards() {
 		}
 		const requests = urls.map(async (url) => await fetch(url));
 		const response = await Promise.all(requests);
-		const allCocktails = await Promise.all(response.map((item) => item.json()));
-		allCocktails.forEach((item) => {
-			if (item.drinks !== null) each = each.concat(item.drinks);
-		});
-		for (const cocktail of each) {
-			const ingPrice1 = PRICES.hasOwnProperty(cocktail.strIngredient1)
-				? PRICES[cocktail.strIngredient1]
-				: 3;
-			const ingPrice2 = PRICES.hasOwnProperty(cocktail.strIngredient2)
-				? PRICES[cocktail.strIngredient2]
-				: 3;
-			const ingPrice3 = PRICES.hasOwnProperty(cocktail.strIngredient3)
-				? PRICES[cocktail.strIngredient3]
-				: cocktail.strIngredient3 === null
-				? 0
-				: 3;
-			const ingPrice4 = PRICES.hasOwnProperty(cocktail.strIngredient4)
-				? PRICES[cocktail.strIngredient4]
-				: cocktail.strIngredient4 === null
-				? 0
-				: 3;
-			const ingPrice5 = PRICES.hasOwnProperty(cocktail.strIngredient5)
-				? PRICES[cocktail.strIngredient5]
-				: cocktail.strIngredient5 === null
-				? 0
-				: 3;
-			const ingPrice6 = PRICES.hasOwnProperty(cocktail.strIngredient6)
-				? PRICES[cocktail.strIngredient6]
-				: cocktail.strIngredient6 === null
-				? 0
-				: 3;
-			cocktail.price = ingPrice1 + ingPrice2 + ingPrice3 + ingPrice4 + ingPrice5 + ingPrice6;
+		const allCocktails = await Promise.all(response.map(async (item) => await item.json()));
+		const cocktails = allCocktails.reduce(
+			(all, cocktail) => (cocktail.drinks ? [...all, ...cocktail.drinks] : all),
+			[]
+		);
+
+		for (const cocktail of cocktails) {
+			const ingredients = [
+				cocktail.strIngredient1,
+				cocktail.strIngredient2,
+				cocktail.strIngredient3,
+				cocktail.strIngredient4,
+				cocktail.strIngredient5,
+				cocktail.strIngredient6,
+				cocktail.strIngredient7,
+				cocktail.strIngredient8,
+				cocktail.strIngredient9,
+				cocktail.strIngredient10,
+				cocktail.strIngredient11,
+				cocktail.strIngredient12,
+				cocktail.strIngredient13,
+				cocktail.strIngredient14,
+				cocktail.strIngredient15,
+			];
+			cocktail.price = ingredients.reduce((sum, ingredient) => {
+				if (ingredient) sum += PRICES[ingredient.toLowerCase()];
+				return sum;
+			}, 0);
 		}
 		setPopularCocktails([
-			each[66],
-			each[84],
-			each[275],
-			each[228],
-			each[51],
-			each[47],
-			each[256],
-			each[268],
-			each[237],
-			each[96],
-			each[405],
-			each[236],
+			cocktails[66],
+			cocktails[84],
+			cocktails[275],
+			cocktails[228],
+			cocktails[51],
+			cocktails[47],
+			cocktails[256],
+			cocktails[268],
+			cocktails[237],
+			cocktails[96],
+			cocktails[405],
+			cocktails[236],
 		]);
-		setData(each);
+		setData(cocktails);
 	}
 
 	useEffect(() => {
@@ -165,16 +160,16 @@ export default function CocktailCards() {
 				item.price +
 				PRICES[
 					!NONALCOHOLIC.hasOwnProperty(item.strIngredient1)
-						? item.strIngredient1
+						? item.strIngredient1.toLowerCase()
 						: !NONALCOHOLIC.hasOwnProperty(item.strIngredient2)
-						? item.strIngredient2
+						? item.strIngredient2.toLowerCase()
 						: !NONALCOHOLIC.hasOwnProperty(item.strIngredient3)
-						? item.strIngredient3
+						? item.strIngredient3.toLowerCase()
 						: !NONALCOHOLIC.hasOwnProperty(item.strIngredient4)
-						? item.strIngredient4
+						? item.strIngredient4.toLowerCase()
 						: !NONALCOHOLIC.hasOwnProperty(item.strIngredient5)
-						? item.strIngredient5
-						: item.strIngredient6
+						? item.strIngredient5.toLowerCase()
+						: item.strIngredient6.toLowerCase()
 				],
 		};
 	};
@@ -258,41 +253,41 @@ export default function CocktailCards() {
 												style={{ marginLeft: "10px", marginRight: "10px" }}
 											>
 												{ing
-													? "Double <<" + ing + ">>  /+$" + PRICES[ing] + ".00"
+													? "Double <<" + ing + ">>  /+$" + PRICES[ing.toLowerCase()] + ".00"
 													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient1)
 													? "Double <<" +
 													  cocktail.strIngredient1 +
 													  ">>  /+$" +
-													  PRICES[cocktail.strIngredient1] +
+													  PRICES[cocktail.strIngredient1.toLowerCase()] +
 													  ".00"
 													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient2)
 													? "Double <<" +
 													  cocktail.strIngredient2 +
 													  ">>  /+$" +
-													  PRICES[cocktail.strIngredient2] +
+													  PRICES[cocktail.strIngredient2.toLowerCase()] +
 													  ".00"
 													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient3)
 													? "Double <<" +
 													  cocktail.strIngredient3 +
 													  ">>  /+$" +
-													  PRICES[cocktail.strIngredient3] +
+													  PRICES[cocktail.strIngredient3.toLowerCase()] +
 													  ".00"
 													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient4)
 													? "Double <<" +
 													  cocktail.strIngredient4 +
 													  ">>  /+$" +
-													  PRICES[cocktail.strIngredient4] +
+													  PRICES[cocktail.strIngredient4.toLowerCase()] +
 													  ".00"
 													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient5)
 													? "Double <<" +
 													  cocktail.strIngredient5 +
 													  ">>  /+$" +
-													  PRICES[cocktail.strIngredient5] +
+													  PRICES[cocktail.strIngredient5.toLowerCase()] +
 													  ".00"
 													: "Double <<" +
 													  cocktail.strIngredient6 +
 													  ">>  /+$" +
-													  PRICES[cocktail.strIngredient6] +
+													  PRICES[cocktail.strIngredient6.toLowerCase()] +
 													  ".00"}
 											</Button>
 										)}

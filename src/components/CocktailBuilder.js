@@ -39,10 +39,10 @@ function CustomCocktail() {
 	const obj = {
 		idDrink: ingredient1 + ingredient2 + ingredient3 + ingredient4 + cocktailName,
 		price:
-			PRICES[ingredient1] +
-			PRICES[ingredient2] +
-			(PRICES[ingredient3] || 0) +
-			(PRICES[ingredient4] || 0) +
+			PRICES[ingredient1.toLowerCase()] +
+			PRICES[ingredient2.toLowerCase()] +
+			(PRICES[ingredient3.toLowerCase()] || 0) +
+			(PRICES[ingredient4.toLowerCase()] || 0) +
 			3,
 		strDrink: cocktailName,
 		strCategory: currentUser?.displayName + "'s Creation",
