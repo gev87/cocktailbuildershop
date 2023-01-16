@@ -60,16 +60,22 @@ export default function CocktailCards() {
 			});
 	}, [currentUser]);
 
-	useEffect(() => {
-		if (filteredApi.length) {
-			setShow(filteredApi);
-		} else if (data.length) {
-			setShow(popularCocktails);
-		}
-	}, [data, popularCocktails, filteredApi]);
+	// useEffect(() => {
+	// 	if (filteredApi.length) {
+	// 		setShow(filteredApi);
+	// 	} else if (data.length) {
+	// 		setShow(popularCocktails);
+	// 	}
+	// }, [data, popularCocktails, filteredApi]);
 
 	useEffect(() => {
-		getAllCocktails();
+			
+		const allCocktails = localStorage.getItem("allCocktails");
+		const bestCocktails = localStorage.getItem("popularCocktails");
+		if (allCocktails) {
+			setData(JSON.parse(allCocktails));
+			setPopularCocktails(JSON.parse(bestCocktails));
+		} else getAllCocktails();
 	}, []);
 
 	async function getAllCocktails() {
@@ -110,7 +116,8 @@ export default function CocktailCards() {
 				return sum;
 			}, 0);
 		}
-		setPopularCocktails([
+
+		const bestCocktails = [
 			cocktails[66],
 			cocktails[84],
 			cocktails[275],
@@ -123,7 +130,10 @@ export default function CocktailCards() {
 			cocktails[96],
 			cocktails[405],
 			cocktails[236],
-		]);
+		];
+		localStorage.setItem("popularCocktails", JSON.stringify(bestCocktails));
+		setPopularCocktails(bestCocktails);
+		localStorage.setItem("allCocktails", JSON.stringify(cocktails));
 		setData(cocktails);
 	}
 
