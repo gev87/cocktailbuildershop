@@ -69,7 +69,6 @@ export default function CocktailCards() {
 	// }, [data, popularCocktails, filteredApi]);
 
 	useEffect(() => {
-			
 		const allCocktails = localStorage.getItem("allCocktails");
 		const bestCocktails = localStorage.getItem("popularCocktails");
 		if (allCocktails) {
@@ -85,9 +84,15 @@ export default function CocktailCards() {
 		for (const letter of letters) {
 			urls.push(mainURL + letter);
 		}
-		const requests = urls.map(async (url) => await fetch(url));
-		const response = await Promise.all(requests);
-		const allCocktails = await Promise.all(response.map(async (item) => await item.json()));
+		let allCocktails;
+		try {
+			const response = urls.map(async (url) => await fetch(url));
+			const json = await Promise.all(response);
+			allCocktails = await Promise.all(json.map(async (item) => await item.json()));
+		} catch {
+			return [];
+		}
+
 		const cocktails = allCocktails.reduce(
 			(all, cocktail) => (cocktail.drinks ? [...all, ...cocktail.drinks] : all),
 			[]
@@ -234,7 +239,7 @@ export default function CocktailCards() {
 					</Typography>
 					<Container className={classes.cardGrid} maxWidth="md">
 						<Grid container spacing={4}>
-							{show.map((cocktail) => (
+							{Array.isArray(show) && show.map((cocktail) => (
 								<Grid item key={cocktail.idDrink} xs={12} sm={6} md={4}>
 									<Card className={classes.card}>
 										<CardActionArea>
