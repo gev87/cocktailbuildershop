@@ -2,12 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import { Button, Card, CardActions, CardContent } from "@material-ui/core";
 import { CardMedia, Grid, Typography, Container } from "@material-ui/core";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
-import PRICES from "../consts/PRICES";
+import { INGREDIENTS } from "../consts/PRICES";
 import THEMES from "../consts/THEMES";
 import CustomSwiper from "./CustomSwiper";
 import { MainContext } from "../context/MainContext";
 import NavBar from "./NavBar";
-import NONALCOHOLIC from "../consts/NONALCOHOLIC";
 import ImgDialog from "./ImgDialog";
 import { CartContext } from "../context/CartContext";
 import { calcItemQty } from "../utils/Commonfuncs";
@@ -34,6 +33,16 @@ export default function CocktailCards() {
 	const [cartChanged, setCartChanged] = useState(null);
 	const navigate = useNavigate();
 	const [, setCart] = useState({});
+	const ingredientArray = (cocktail) => {
+		return Object.entries(cocktail).reduce((accum,ing) => {
+			if (ing[0].includes("strIngredient") && ing[1]) accum.push(ing[1].toLowerCase());
+			return accum;
+		},[])
+	};
+
+	const findAlcoholic = (cocktail) => {
+		return ingredientArray(cocktail).find((ing) => INGREDIENTS[ing].isAlcoholic);
+	};
 
 	useEffect(() => {
 		if (!searchCocktail.length) {
@@ -99,25 +108,9 @@ export default function CocktailCards() {
 		);
 
 		for (const cocktail of cocktails) {
-			const ingredients = [
-				cocktail.strIngredient1,
-				cocktail.strIngredient2,
-				cocktail.strIngredient3,
-				cocktail.strIngredient4,
-				cocktail.strIngredient5,
-				cocktail.strIngredient6,
-				cocktail.strIngredient7,
-				cocktail.strIngredient8,
-				cocktail.strIngredient9,
-				cocktail.strIngredient10,
-				cocktail.strIngredient11,
-				cocktail.strIngredient12,
-				cocktail.strIngredient13,
-				cocktail.strIngredient14,
-				cocktail.strIngredient15,
-			];
+			const ingredients = ingredientArray(cocktail);
 			cocktail.price = ingredients.reduce((sum, ingredient) => {
-				if (ingredient) sum += PRICES[ingredient.toLowerCase()];
+				if (ingredient) sum += INGREDIENTS[ingredient]?.price;
 				return sum;
 			}, 0);
 		}
@@ -171,21 +164,7 @@ export default function CocktailCards() {
 			...item,
 			idDrink: item.idDrink + "double",
 			strDrink: item.strDrink + " DOUBLE",
-			price:
-				item.price +
-				PRICES[
-					!NONALCOHOLIC.hasOwnProperty(item.strIngredient1)
-						? item.strIngredient1.toLowerCase()
-						: !NONALCOHOLIC.hasOwnProperty(item.strIngredient2)
-						? item.strIngredient2.toLowerCase()
-						: !NONALCOHOLIC.hasOwnProperty(item.strIngredient3)
-						? item.strIngredient3.toLowerCase()
-						: !NONALCOHOLIC.hasOwnProperty(item.strIngredient4)
-						? item.strIngredient4.toLowerCase()
-						: !NONALCOHOLIC.hasOwnProperty(item.strIngredient5)
-						? item.strIngredient5.toLowerCase()
-						: item.strIngredient6.toLowerCase()
-				],
+			price: item.price + INGREDIENTS[findAlcoholic(item)].price,
 		};
 	};
 
@@ -239,104 +218,71 @@ export default function CocktailCards() {
 					</Typography>
 					<Container className={classes.cardGrid} maxWidth="md">
 						<Grid container spacing={4}>
-							{Array.isArray(show) && show.map((cocktail) => (
-								<Grid item key={cocktail.idDrink} xs={12} sm={6} md={4}>
-									<Card className={classes.card}>
-										<CardActionArea>
-											<CardMedia
-												className={classes.cardMedia}
-												image={cocktail.strDrinkThumb}
-												title={cocktail.strDrink}
-												onClick={() => {
-													setSelectItem(cocktail);
-													setDialog1Open(true);
-												}}
-											/>
-										</CardActionArea>
-										<CardContent className={classes.cardContent}>
-											<Typography gutterBottom variant="h5" component="h2">
-												{cocktail.strDrink}
-											</Typography>
+							{Array.isArray(show) &&
+								show.map((cocktail) => (
+									<Grid item key={cocktail.idDrink} xs={12} sm={6} md={4}>
+										<Card className={classes.card}>
+											<CardActionArea>
+												<CardMedia
+													className={classes.cardMedia}
+													image={cocktail.strDrinkThumb}
+													title={cocktail.strDrink}
+													onClick={() => {
+														setSelectItem(cocktail);
+														setDialog1Open(true);
+													}}
+												/>
+											</CardActionArea>
+											<CardContent className={classes.cardContent}>
+												<Typography gutterBottom variant="h5" component="h2">
+													{cocktail.strDrink}
+												</Typography>
 
-											<Typography>{cocktail.strCategory}</Typography>
-										</CardContent>
-										{currentUser && cocktail.strAlcoholic === "Alcoholic" && (
-											<Button
-												onClick={() => addItemToCart(cocktail, onDouble)}
-												color="primary"
-												variant="outlined"
-												style={{ marginLeft: "10px", marginRight: "10px" }}
-											>
-												{ing
-													? "Double <<" + ing + ">>  /+$" + PRICES[ing.toLowerCase()] + ".00"
-													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient1)
-													? "Double <<" +
-													  cocktail.strIngredient1 +
-													  ">>  /+$" +
-													  PRICES[cocktail.strIngredient1.toLowerCase()] +
-													  ".00"
-													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient2)
-													? "Double <<" +
-													  cocktail.strIngredient2 +
-													  ">>  /+$" +
-													  PRICES[cocktail.strIngredient2.toLowerCase()] +
-													  ".00"
-													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient3)
-													? "Double <<" +
-													  cocktail.strIngredient3 +
-													  ">>  /+$" +
-													  PRICES[cocktail.strIngredient3.toLowerCase()] +
-													  ".00"
-													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient4)
-													? "Double <<" +
-													  cocktail.strIngredient4 +
-													  ">>  /+$" +
-													  PRICES[cocktail.strIngredient4.toLowerCase()] +
-													  ".00"
-													: !NONALCOHOLIC.hasOwnProperty(cocktail.strIngredient5)
-													? "Double <<" +
-													  cocktail.strIngredient5 +
-													  ">>  /+$" +
-													  PRICES[cocktail.strIngredient5.toLowerCase()] +
-													  ".00"
-													: "Double <<" +
-													  cocktail.strIngredient6 +
-													  ">>  /+$" +
-													  PRICES[cocktail.strIngredient6.toLowerCase()] +
-													  ".00"}
-											</Button>
-										)}
-										<CardActions>
-											{currentUser ? (
-												<>
-													<Button
-														onClick={() => addItemToCart(cocktail)}
-														size="small"
-														color="primary"
-														variant="outlined"
-													>
-														ADD TO{" "}
-														<ShoppingCartIcon style={{ paddingLeft: "10px", color: "#6be909" }} />
-													</Button>
-													<Button
-														onClick={() => navigate("/payment")}
-														variant="outlined"
-														size="small"
-														color="primary"
-													>
-														Order Now
-													</Button>
-												</>
-											) : (
-												<LoginSignUp />
+												<Typography>{cocktail.strCategory}</Typography>
+											</CardContent>
+											{currentUser && cocktail.strAlcoholic === "Alcoholic" && (
+												<Button
+													onClick={() => addItemToCart(cocktail, onDouble)}
+													color="primary"
+													variant="outlined"
+													style={{ marginLeft: "10px", marginRight: "10px" }}
+												>
+													{`Double <<${findAlcoholic(cocktail)}>>  /+$${
+														INGREDIENTS[findAlcoholic(cocktail)].price
+													}.00`}
+												</Button>
 											)}
-											<Grid item>
-												<Typography variant="button">${cocktail.price}.00</Typography>{" "}
-											</Grid>
-										</CardActions>
-									</Card>
-								</Grid>
-							))}
+											<CardActions>
+												{currentUser ? (
+													<>
+														<Button
+															onClick={() => addItemToCart(cocktail)}
+															size="small"
+															color="primary"
+															variant="outlined"
+														>
+															ADD TO{" "}
+															<ShoppingCartIcon style={{ paddingLeft: "10px", color: "#6be909" }} />
+														</Button>
+														<Button
+															onClick={() => navigate("/payment")}
+															variant="outlined"
+															size="small"
+															color="primary"
+														>
+															Order Now
+														</Button>
+													</>
+												) : (
+													<LoginSignUp />
+												)}
+												<Grid item>
+													<Typography variant="button">${cocktail.price}.00</Typography>{" "}
+												</Grid>
+											</CardActions>
+										</Card>
+									</Grid>
+								))}
 						</Grid>
 					</Container>
 					<ImgDialog open={openDlg1Dialog} close={() => setDialog1Open(false)} data={selectItem} />
