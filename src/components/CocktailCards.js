@@ -33,11 +33,12 @@ export default function CocktailCards() {
 	const [cartChanged, setCartChanged] = useState(null);
 	const navigate = useNavigate();
 	const [, setCart] = useState({});
+
 	const ingredientArray = (cocktail) => {
-		return Object.entries(cocktail).reduce((accum,ing) => {
+		return Object.entries(cocktail).reduce((accum, ing) => {
 			if (ing[0].includes("strIngredient") && ing[1]) accum.push(ing[1].toLowerCase());
 			return accum;
-		},[])
+		}, []);
 	};
 
 	const findAlcoholic = (cocktail) => {
@@ -89,10 +90,7 @@ export default function CocktailCards() {
 	async function getAllCocktails() {
 		const mainURL = "https://thecocktaildb.com/api/json/v1/1/search.php?f=";
 		const letters = "abcdefghijklmnopqrstuvwxyz0123456789";
-		const urls = [];
-		for (const letter of letters) {
-			urls.push(mainURL + letter);
-		}
+		const urls = letters.split("").map((letter) => mainURL + letter);
 		let allCocktails;
 		try {
 			const response = urls.map(async (url) => await fetch(url));
@@ -101,18 +99,16 @@ export default function CocktailCards() {
 		} catch {
 			return [];
 		}
-
 		const cocktails = allCocktails.reduce(
 			(all, cocktail) => (cocktail.drinks ? [...all, ...cocktail.drinks] : all),
 			[]
 		);
 
 		for (const cocktail of cocktails) {
-			const ingredients = ingredientArray(cocktail);
-			cocktail.price = ingredients.reduce((sum, ingredient) => {
-				if (ingredient) sum += INGREDIENTS[ingredient]?.price;
-				return sum;
-			}, 0);
+			cocktail.price = ingredientArray(cocktail).reduce(
+				(sum, ingredient) => sum + INGREDIENTS[ingredient]?.price,
+				0
+			);
 		}
 
 		const bestCocktails = [
@@ -171,24 +167,8 @@ export default function CocktailCards() {
 	function filterByIngredient(i) {
 		setIng(i);
 		setHeader("Cocktails Maid of " + i);
-		let filtereddata = [];
-		for (let cocktail of data) {
-			if (
-				[
-					cocktail.strIngredient1,
-					cocktail.strIngredient2,
-					cocktail.strIngredient3,
-					cocktail.strIngredient4,
-				].includes(i)
-			) {
-				filtereddata = filtereddata.concat(cocktail);
-			}
-		}
-		setShow(filtereddata);
-	}
-
-	function popularIngsSwitch() {
-		popularIngs ? setPopularIngs(false) : setPopularIngs(true);
+		const result = data.filter((cocktail) => ingredientArray(cocktail).includes(i.toLowerCase()));
+		setShow(result);
 	}
 
 	function popularCocktailsSwitch() {
@@ -203,14 +183,14 @@ export default function CocktailCards() {
 					setSearchCocktil={setSearchCocktil}
 					mainPage
 					fetchData={data}
-					popularIngsSwitch={popularIngsSwitch}
+					popularIngsSwitch={() => setPopularIngs(!popularIngs)}
 					popularCocktailsSwitch={popularCocktailsSwitch}
 					cartQty={cartQty}
 				/>
 				<div style={{ backgroundColor: "#4052b5" }}>
 					<img width="100%" alt="background" src="/images/cocktailbackground.jpg" />
 				</div>
-				{popularIngs && <CustomSwiper filterByIngredient={(i) => filterByIngredient(i)} />}
+				{popularIngs && <CustomSwiper filterByIngredient={filterByIngredient} />}
 				<div style={{ backgroundColor: "#4052b5", color: "black" }}>
 					<br />
 					<Typography variant="h4" align="center" paragraph>
