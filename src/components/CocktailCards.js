@@ -20,14 +20,14 @@ export default function CocktailCards() {
 	const [data, setData] = useState([]);
 	const { currentUser } = useContext(MainContext);
 	const [show, setShow] = useState([]);
-	const [ing, setIng] = useState();
+	const [, setIng] = useState();
 	const [header, setHeader] = useState("MOST POPULAR COCKTAILS");
 	const [popularIngs, setPopularIngs] = useState(true);
 	const [popularCocktails, setPopularCocktails] = useState(true);
 	const { filteredApi, setFilteredApi, onAdd } = useContext(CartContext);
 	const [selectItem, setSelectItem] = useState("");
 	const [openDlg1Dialog, setDialog1Open] = useState(false);
-	const [searchCocktail, setSearchCocktil] = useState("");
+	const [searchCocktail, setSearchCocktail] = useState("");
 	const [resultSearchCocktail, setResultSearchCocktail] = useState([]);
 	const [cartQty, setCartQty] = useState(null);
 	const [cartChanged, setCartChanged] = useState(null);
@@ -42,7 +42,7 @@ export default function CocktailCards() {
 	};
 
 	const findAlcoholic = (cocktail) => {
-		return ingredientArray(cocktail).find((ing) => INGREDIENTS[ing].isAlcoholic);
+		return ingredientArray(cocktail).find((ing) => INGREDIENTS[ing]?.isAlcoholic);
 	};
 
 	useEffect(() => {
@@ -180,7 +180,7 @@ export default function CocktailCards() {
 			<main>
 				<NavBar
 					searchCocktail={searchCocktail}
-					setSearchCocktil={setSearchCocktil}
+					setSearchCocktil={setSearchCocktail}
 					mainPage
 					fetchData={data}
 					popularIngsSwitch={() => setPopularIngs(!popularIngs)}
@@ -228,7 +228,7 @@ export default function CocktailCards() {
 													style={{ marginLeft: "10px", marginRight: "10px" }}
 												>
 													{`Double <<${findAlcoholic(cocktail)}>>  /+$${
-														INGREDIENTS[findAlcoholic(cocktail)].price
+														INGREDIENTS[findAlcoholic(cocktail)]?.price
 													}.00`}
 												</Button>
 											)}

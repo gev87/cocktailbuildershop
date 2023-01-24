@@ -21,7 +21,7 @@ export default function MenuAppBar({
   showDrawer = true,
 	mainPage,
 	searchCocktail,
-	setSearchCocktil
+	setSearchCocktail
 }) {
   const classes = THEMES();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -50,15 +50,15 @@ export default function MenuAppBar({
     }
   }
   const onInputValue = (e) => {
-	setSearchCocktil(e.target.value)
+	setSearchCocktail(e.target.value)
 }
 
 const onClear = () => {
-	setSearchCocktil('')
+	setSearchCocktail('')
 }
 	function mainpageCheck() {
 		if (mainPage) {
-			setSearchCocktil('');
+			setSearchCocktail('');
 			popularCocktailsSwitch();
 		} else navigate("/");
 				
