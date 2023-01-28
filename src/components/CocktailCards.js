@@ -9,7 +9,6 @@ import { MainContext } from "../context/MainContext";
 import NavBar from "./NavBar";
 import ImgDialog from "./ImgDialog";
 import { CartContext } from "../context/CartContext";
-import { calcItemQty } from "../utils/Commonfuncs";
 import { writeAsync, readOnceGet, updateAsync } from "../firebase/crudoperations";
 import { useNavigate } from "react-router-dom";
 import LoginSignUp from "./LoginSignUp";
@@ -24,15 +23,12 @@ export default function CocktailCards() {
 	const [header, setHeader] = useState("MOST POPULAR COCKTAILS");
 	const [popularIngs, setPopularIngs] = useState(true);
 	const [popularCocktails, setPopularCocktails] = useState(true);
-	const { filteredApi, setFilteredApi, onAdd } = useContext(CartContext);
+	const { filteredApi, setFilteredApi, onAdd, cartQty, setCartQty } = useContext(CartContext);
 	const [selectItem, setSelectItem] = useState("");
 	const [openDlg1Dialog, setDialog1Open] = useState(false);
 	const [searchCocktail, setSearchCocktail] = useState("");
 	const [resultSearchCocktail, setResultSearchCocktail] = useState([]);
-	const [cartQty, setCartQty] = useState(null);
-	const [cartChanged, setCartChanged] = useState(null);
 	const navigate = useNavigate();
-	const [, setCart] = useState({});
 
 	const ingredientArray = (cocktail) => {
 		return Object.entries(cocktail).reduce((accum, ing) => {
@@ -58,17 +54,6 @@ export default function CocktailCards() {
 		}
 	}, [searchCocktail, data, setFilteredApi]);
 
-	useEffect(() => {
-		currentUser && setCartQty(calcItemQty(currentUser));
-	}, [currentUser, cartChanged]);
-
-	useEffect(() => {
-		currentUser &&
-			readOnceGet(`users/${currentUser.uid}/orders`, (items) => items).then((value) => {
-				setCart(value ? value : {});
-				setCartChanged([]);
-			});
-	}, [currentUser]);
 
 	// useEffect(() => {
 	// 	if (filteredApi.length) {
@@ -152,7 +137,6 @@ export default function CocktailCards() {
 	const addItemToCart = (cocktail, onDouble) => {
 		onAdd(cocktail, onDouble);
 		setCartQty(cartQty + 1);
-		setCartChanged([]);
 	};
 
 	const onDouble = (item) => {
@@ -180,7 +164,7 @@ export default function CocktailCards() {
 			<main>
 				<NavBar
 					searchCocktail={searchCocktail}
-					setSearchCocktil={setSearchCocktail}
+					setSearchCocktail={setSearchCocktail}
 					mainPage
 					fetchData={data}
 					popularIngsSwitch={() => setPopularIngs(!popularIngs)}

@@ -1,37 +1,23 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Button, Container, CardActions, CardContent } from "@material-ui/core";
 import { CardMedia, Grid, Typography, Card, Icon } from "@material-ui/core";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import THEMES from "../consts/THEMES";
-import { calcItemQty } from "../utils/Commonfuncs";
 import { readOnceGet, writeAsync, updateAsync, removeAsync } from "../firebase/crudoperations";
 import { MainContext } from "../context/MainContext";
 import ShopIcon from "@material-ui/icons/Shop";
 import RemoveShoppingCartOutlinedIcon from "@material-ui/icons/RemoveShoppingCartOutlined";
 import { useNavigate } from "react-router-dom";
+import { CartContext } from "../context/CartContext";
 
 export default function Basket() {
 	const classes = THEMES();
 	const { currentUser } = useContext(MainContext);
-	const [cart, setCart] = useState({});
-	const [cartQty, setCartQty] = useState(null);
+	const { cart, setCart, cartQty, setCartQty } = useContext(CartContext);
 	const navigate = useNavigate();
-	const [cartChanged, setCartChanged] = useState(null);
-	const [clearCart, setClearCart] = useState(false);
-
-	useEffect(() => {
-		currentUser && setCartQty(calcItemQty(currentUser));
-	}, [currentUser, cartChanged, clearCart]);
-
-	useEffect(() => {
-		currentUser &&
-			readOnceGet(`users/${currentUser.uid}/orders`, (items) => items).then((value) => {
-				setCart(value ? value : {});
-				setCartChanged([]);
-			});
-	}, [currentUser, clearCart]);
+	
 
 	const addItemToCart = (card, func) => {
 		const item = Object.entries(cart).find(
@@ -46,9 +32,7 @@ export default function Basket() {
 					quantity: ++item[1].quantity,
 			  });
 
-		readOnceGet(`users/${currentUser.uid}/orders`, (items) => items).then((value) =>
-			setCart(value ? value : {})
-		);
+		readOnceGet(`users/${currentUser.uid}/orders`, (items) => setCart(items || {}));
 		setCartQty(cartQty + 1);
 	};
 
@@ -62,15 +46,15 @@ export default function Basket() {
 					quantity: --item[1].quantity,
 			  });
 
-		readOnceGet(`users/${currentUser.uid}/orders`, (items) => items).then((value) =>
-			setCart(value ? value : {})
-		);
+		readOnceGet(`users/${currentUser.uid}/orders`, (items) => setCart(items || {}));
+		
 		setCartQty(cartQty - 1);
 	};
 
 	const clearAll = (currentUser) => {
 		removeAsync(`users/${currentUser.uid}/orders`);
-		setClearCart(true);
+		setCart({});
+		setCartQty(null);
 	};
 
 	return (

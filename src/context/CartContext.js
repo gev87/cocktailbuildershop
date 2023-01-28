@@ -1,8 +1,7 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import PRICES from "../consts/PRICES";
 import { writeAsync, readOnceGet, updateAsync } from "../firebase/crudoperations";
 import { MainContext } from "./MainContext";
-import { calcItemQty } from "../utils/Commonfuncs";
 
 export const CartContext = createContext();
 
@@ -10,6 +9,24 @@ export const CartProvider = (props) => {
 	const [cart, setCart] = useState([]);
 	const [filteredApi, setFilteredApi] = useState([]);
 	const { currentUser } = useContext(MainContext);
+	const [cartQty, setCartQty] = useState(null);
+
+	function countCartQuantity(data) {
+		return Object.values(data).reduce((amount, cocktail) => amount + cocktail.quantity, 0);
+	}
+
+	function getCartQty() {
+		if (currentUser) {
+			readOnceGet(`users/${currentUser.uid}/orders`, (items) => {
+				setCart(items || {});
+				setCartQty(countCartQuantity(items));
+			});
+		}
+	}
+
+	useEffect(() => {
+		getCartQty();
+	}, [currentUser]);
 
 	// const onAdd = (item) => {
 	// 	const exist = cart.find((x) => x.idDrink === item.idDrink);
@@ -64,8 +81,10 @@ export const CartProvider = (props) => {
 	};
 
 	return (
-		<CartContext.Provider value={{ cart, setCart, onAdd, onRemove, filteredApi, setFilteredApi }}>
+		<CartContext.Provider
+			value={{ cart, setCart, onAdd, onRemove, filteredApi, setFilteredApi, cartQty, setCartQty }}
+		>
 			{props.children}
 		</CartContext.Provider>
 	);
-}
+};

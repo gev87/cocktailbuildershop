@@ -11,7 +11,6 @@ import ShopIcon from "@material-ui/icons/Shop";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import Footer from "./Footer";
 import THEMES from "../consts/THEMES";
-import { calcItemQty } from "../utils/Commonfuncs";
 import { writeAsync, readOnceGet, updateAsync } from "../firebase/crudoperations";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
@@ -22,20 +21,12 @@ function CustomCocktail() {
 	const [ingredient3, setIngredient3] = useState("");
 	const [ingredient4, setIngredient4] = useState("");
 	const [cocktailName, setCocktailName] = useState("");
-	const [cartQty, setCartQty] = useState(null);
-	const [cartChanged, setCartChanged] = useState(null);
 	const [error, setError] = useState("");
 	const { currentUser } = useContext(MainContext);
 	const classes = THEMES();
 	const navigate = useNavigate();
-	const { onAdd } = useContext(CartContext);
+	const { onAdd, cartQty, setCartQty } = useContext(CartContext);
 	
-
-
-	useEffect(() => {
-		currentUser && setCartQty(calcItemQty(currentUser));
-	}, [currentUser, cartChanged]);
-
 	const obj = {
 		idDrink: ingredient1 + ingredient2 + ingredient3 + ingredient4 + cocktailName,
 		price:
@@ -56,7 +47,6 @@ function CustomCocktail() {
 	const addItemToCart = (card, func) => {
 		onAdd(card, func);
 		setCartQty(cartQty + 1);
-		setCartChanged([]);
 	};
 
 	function handleSubmit(event) {
