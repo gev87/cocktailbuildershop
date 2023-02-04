@@ -23,7 +23,7 @@ export default function CocktailCards() {
 	const [header, setHeader] = useState("MOST POPULAR COCKTAILS");
 	const [popularIngs, setPopularIngs] = useState(true);
 	const [popularCocktails, setPopularCocktails] = useState(true);
-	const { filteredApi, setFilteredApi, onAdd, cartQty, setCartQty } = useContext(CartContext);
+	const { filteredApi, setFilteredApi, onAdd, cartQty } = useContext(CartContext);
 	const [selectItem, setSelectItem] = useState("");
 	const [openDlg1Dialog, setDialog1Open] = useState(false);
 	const [searchCocktail, setSearchCocktail] = useState("");
@@ -40,7 +40,6 @@ export default function CocktailCards() {
 	const findAlcoholic = (cocktail) => {
 		return ingredientArray(cocktail).find((ing) => INGREDIENTS[ing]?.isAlcoholic);
 	};
-
 	useEffect(() => {
 		if (!searchCocktail.length) {
 			setResultSearchCocktail([]);
@@ -55,13 +54,13 @@ export default function CocktailCards() {
 	}, [searchCocktail, data, setFilteredApi]);
 
 
-	// useEffect(() => {
-	// 	if (filteredApi.length) {
-	// 		setShow(filteredApi);
-	// 	} else if (data.length) {
-	// 		setShow(popularCocktails);
-	// 	}
-	// }, [data, popularCocktails, filteredApi]);
+	useEffect(() => {
+		if (filteredApi.length) {
+			setShow(filteredApi);
+		} else if (data.length) {
+			setShow(popularCocktails);
+		}
+	}, [data, popularCocktails, filteredApi]);
 
 	useEffect(() => {
 		const allCocktails = localStorage.getItem("allCocktails");
@@ -134,11 +133,6 @@ export default function CocktailCards() {
 		}
 	}, [data, popularCocktails, filteredApi, resultSearchCocktail, searchCocktail.length]);
 
-	const addItemToCart = (cocktail, onDouble) => {
-		onAdd(cocktail, onDouble);
-		setCartQty(cartQty + 1);
-	};
-
 	const onDouble = (item) => {
 		return {
 			...item,
@@ -206,7 +200,7 @@ export default function CocktailCards() {
 											</CardContent>
 											{currentUser && cocktail.strAlcoholic === "Alcoholic" && (
 												<Button
-													onClick={() => addItemToCart(cocktail, onDouble)}
+													onClick={() => onAdd(cocktail, onDouble)}
 													color="primary"
 													variant="outlined"
 													style={{ marginLeft: "10px", marginRight: "10px" }}
@@ -220,7 +214,7 @@ export default function CocktailCards() {
 												{currentUser ? (
 													<>
 														<Button
-															onClick={() => addItemToCart(cocktail)}
+															onClick={() => onAdd(cocktail)}
 															size="small"
 															color="primary"
 															variant="outlined"

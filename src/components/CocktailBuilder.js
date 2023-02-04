@@ -25,7 +25,7 @@ function CustomCocktail() {
 	const { currentUser } = useContext(MainContext);
 	const classes = THEMES();
 	const navigate = useNavigate();
-	const { onAdd, cartQty, setCartQty } = useContext(CartContext);
+	const { onAdd, cartQty } = useContext(CartContext);
 	
 	const obj = {
 		idDrink: ingredient1 + ingredient2 + ingredient3 + ingredient4 + cocktailName,
@@ -44,11 +44,6 @@ function CustomCocktail() {
 		strIngredient4: ingredient4,
 	};
 
-	const addItemToCart = (card, func) => {
-		onAdd(card, func);
-		setCartQty(cartQty + 1);
-	};
-
 	function handleSubmit(event) {
 		if (!currentUser) {
 			return setError("Please Sign In");
@@ -62,7 +57,7 @@ function CustomCocktail() {
 		}
 		setError("Congratulations! You have made a new cocktail");
 		event.target.innerText === "ADD TO CART"
-			? addItemToCart(obj)
+			? onAdd(obj)
 			: setTimeout(() => navigate("/payment"), 2000);
 	}
 

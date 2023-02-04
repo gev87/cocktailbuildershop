@@ -37,22 +37,24 @@ export const CartProvider = (props) => {
 	// 	}
 	// };
 	const onAdd = (card, func) => {
-		currentUser &&
-			readOnceGet(`users/${currentUser.uid}/orders`, (items) => items).then((value) => {
-				const item =
-					value &&
-					Object.entries(value).find(
-						(e) => e[1].order.idDrink === (func ? func(card).idDrink : card.idDrink)
-					);
-				!item
-					? writeAsync(`users/${currentUser.uid}/orders`, {
-							order: func ? func(card) : card,
-							quantity: 1,
-					  })
-					: updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {
-							quantity: ++item[1].quantity,
-					  });
-			});
+		if (currentUser) {
+				readOnceGet(`users/${currentUser.uid}/orders`, (items) => {
+					const item =
+						items &&
+						Object.values(items).find(
+							(cocktail) => cocktail.order.idDrink === (func ? func(card).idDrink : card.idDrink)
+						);
+					!item
+						? writeAsync(`users/${currentUser.uid}/orders`, {
+								order: func ? func(card) : card,
+								quantity: 1,
+						  })
+						: updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {
+								quantity: ++item[1].quantity,
+						  });
+				});
+				setCartQty(cartQty + 1);
+		}
 	};
 
 	const onRemove = (item) => {
