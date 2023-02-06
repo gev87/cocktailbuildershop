@@ -9,26 +9,25 @@ import { MainContext } from "../context/MainContext";
 import NavBar from "./NavBar";
 import ImgDialog from "./ImgDialog";
 import { CartContext } from "../context/CartContext";
-import { writeAsync, readOnceGet, updateAsync } from "../firebase/crudoperations";
 import { useNavigate } from "react-router-dom";
 import LoginSignUp from "./LoginSignUp";
 import CardActionArea from "@material-ui/core/CardActionArea";
 
 export default function CocktailCards() {
 	const classes = THEMES();
-	const [data, setData] = useState([]);
+	const navigate = useNavigate();
+	const { filteredApi, setFilteredApi, onAdd, cartQty } = useContext(CartContext);
 	const { currentUser } = useContext(MainContext);
+	const [data, setData] = useState([]);
 	const [show, setShow] = useState([]);
-	const [, setIng] = useState();
 	const [header, setHeader] = useState("MOST POPULAR COCKTAILS");
 	const [popularIngs, setPopularIngs] = useState(true);
 	const [popularCocktails, setPopularCocktails] = useState(true);
-	const { filteredApi, setFilteredApi, onAdd, cartQty } = useContext(CartContext);
 	const [selectItem, setSelectItem] = useState("");
-	const [openDlg1Dialog, setDialog1Open] = useState(false);
+	const [openModal, setOpenModal] = useState(false);
 	const [searchCocktail, setSearchCocktail] = useState("");
 	const [resultSearchCocktail, setResultSearchCocktail] = useState([]);
-	const navigate = useNavigate();
+	
 
 	const ingredientArray = (cocktail) => {
 		return Object.entries(cocktail).reduce((accum, ing) => {
@@ -52,7 +51,6 @@ export default function CocktailCards() {
 			);
 		}
 	}, [searchCocktail, data, setFilteredApi]);
-
 
 	useEffect(() => {
 		if (filteredApi.length) {
@@ -143,7 +141,6 @@ export default function CocktailCards() {
 	};
 
 	function filterByIngredient(i) {
-		setIng(i);
 		setHeader("Cocktails Maid of " + i);
 		const result = data.filter((cocktail) => ingredientArray(cocktail).includes(i.toLowerCase()));
 		setShow(result);
@@ -187,7 +184,7 @@ export default function CocktailCards() {
 													title={cocktail.strDrink}
 													onClick={() => {
 														setSelectItem(cocktail);
-														setDialog1Open(true);
+														setOpenModal(true);
 													}}
 												/>
 											</CardActionArea>
@@ -243,7 +240,7 @@ export default function CocktailCards() {
 								))}
 						</Grid>
 					</Container>
-					<ImgDialog open={openDlg1Dialog} close={() => setDialog1Open(false)} data={selectItem} />
+					<ImgDialog open={openModal} close={() => setOpenModal(false)} data={selectItem} />
 				</div>
 			</main>
 		</>

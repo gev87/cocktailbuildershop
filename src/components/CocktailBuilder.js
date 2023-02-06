@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { Container, Typography, Button, TextField } from "@material-ui/core";
 import NavBar from "./NavBar";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -11,7 +11,6 @@ import ShopIcon from "@material-ui/icons/Shop";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import Footer from "./Footer";
 import THEMES from "../consts/THEMES";
-import { writeAsync, readOnceGet, updateAsync } from "../firebase/crudoperations";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 
@@ -23,10 +22,11 @@ function CustomCocktail() {
 	const [cocktailName, setCocktailName] = useState("");
 	const [error, setError] = useState("");
 	const { currentUser } = useContext(MainContext);
+	const { onAdd, cartQty } = useContext(CartContext);
 	const classes = THEMES();
 	const navigate = useNavigate();
-	const { onAdd, cartQty } = useContext(CartContext);
-	
+	const fieldStyle = { width: 250, padding: "15px 0px" };
+
 	const obj = {
 		idDrink: ingredient1 + ingredient2 + ingredient3 + ingredient4 + cocktailName,
 		price:
@@ -56,9 +56,7 @@ function CustomCocktail() {
 			return setError(`${name} ${ing1} ${ing2} ${isOrAre} REQUIRED`);
 		}
 		setError("Congratulations! You have made a new cocktail");
-		event.target.innerText === "ADD TO CART"
-			? onAdd(obj)
-			: setTimeout(() => navigate("/payment"), 2000);
+		event.target.innerText === "ADD TO CART" ? onAdd(obj) : setTimeout(navigate, 2000, "/payment");
 	}
 
 	function onClean() {
@@ -102,7 +100,7 @@ function CustomCocktail() {
 						variant="outlined"
 						label="COCKTAIL NAME"
 						value={cocktailName}
-						style={{ width: 250, padding: "15px 0px" }}
+						style={fieldStyle}
 						color="secondary"
 					/>
 
@@ -115,7 +113,7 @@ function CustomCocktail() {
 						id="controllable-states-demo"
 						options={PRICESARR}
 						getOptionLabel={(option) => option.ingredient}
-						style={{ width: 250, padding: "15px 0px" }}
+						style={fieldStyle}
 						renderInput={(params) => (
 							<TextField {...params} label="INGREDIENT 1" variant="outlined" color="secondary" />
 						)}
@@ -129,7 +127,7 @@ function CustomCocktail() {
 						id="controllable-states-demo"
 						options={PRICESARR}
 						getOptionLabel={(option) => option.ingredient}
-						style={{ width: 250, padding: "15px 0px" }}
+						style={fieldStyle}
 						renderInput={(params) => (
 							<TextField {...params} label="INGREDIENT 2" variant="outlined" color="secondary" />
 						)}
@@ -143,7 +141,7 @@ function CustomCocktail() {
 						id="controllable-states-demo"
 						options={PRICESARR}
 						getOptionLabel={(option) => option.ingredient}
-						style={{ width: 250, padding: "15px 0px" }}
+						style={fieldStyle}
 						renderInput={(params) => (
 							<TextField {...params} label="INGREDIENT 3" variant="outlined" />
 						)}
@@ -157,7 +155,7 @@ function CustomCocktail() {
 						id="controllable-states-demo"
 						options={PRICESARR}
 						getOptionLabel={(option) => option.ingredient}
-						style={{ width: 250, padding: "15px 0px" }}
+						style={fieldStyle}
 						renderInput={(params) => (
 							<TextField {...params} label="INGREDIENT 4" variant="outlined" />
 						)}
