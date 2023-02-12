@@ -214,19 +214,7 @@ export default function CocktailBuilder() {
 				</Typography>
 			</Container>
 			<CustomCocktail />
-			<Container maxWidth="sm">
-				<Typography
-					variant="h5"
-					align="center"
-					color="textSecondary"
-					paragraph
-					style={{ color: "#ac5b01" }}
-				>
-					Here you can challenge yourself by making your own cocktails. Add up to 4 ingredients to
-					your cocktail and enjoy.
-				</Typography>
-				<Footer />
-			</Container>
+			<Footer />
 		</div>
 	);
 }

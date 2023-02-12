@@ -17,7 +17,6 @@ export default function Basket() {
 	const { currentUser } = useContext(MainContext);
 	const { cart, setCart, cartQty, setCartQty } = useContext(CartContext);
 	const navigate = useNavigate();
-	
 
 	const addItemToCart = (card, func) => {
 		const item = Object.entries(cart).find(
@@ -47,7 +46,7 @@ export default function Basket() {
 			  });
 
 		readOnceGet(`users/${currentUser.uid}/orders`, (items) => setCart(items || {}));
-		
+
 		setCartQty(cartQty - 1);
 	};
 
@@ -59,7 +58,7 @@ export default function Basket() {
 
 	return (
 		<React.Fragment>
-			<NavBar cartQty={cartQty} mainPage={false} showDrawer={false} />
+			<NavBar cartQty={cartQty} showDrawer={false} />
 			<main>
 				<div className={classes.heroContent}>
 					<Container maxWidth="sm">

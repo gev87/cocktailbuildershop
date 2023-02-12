@@ -52,7 +52,6 @@ export default function Payment() {
 					0
 				)}
 				showDrawer={false}
-				mainPage={false}
 			/>
 			
 			

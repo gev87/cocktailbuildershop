@@ -22,12 +22,12 @@ export default function CocktailCards() {
 	const [show, setShow] = useState([]);
 	const [header, setHeader] = useState("MOST POPULAR COCKTAILS");
 	const [popularIngs, setPopularIngs] = useState(true);
-	const [popularCocktails, setPopularCocktails] = useState(true);
+	const [popularCocktails, setPopularCocktails] = useState([]);
 	const [selectItem, setSelectItem] = useState("");
 	const [openModal, setOpenModal] = useState(false);
 	const [searchCocktail, setSearchCocktail] = useState("");
 	const [resultSearchCocktail, setResultSearchCocktail] = useState([]);
-	
+	const [youtubeCocktails, setYoutubeCocktails] = useState([]);
 
 	const ingredientArray = (cocktail) => {
 		return Object.entries(cocktail).reduce((accum, ing) => {
@@ -62,10 +62,10 @@ export default function CocktailCards() {
 
 	useEffect(() => {
 		const allCocktails = localStorage.getItem("allCocktails");
-		const bestCocktails = localStorage.getItem("popularCocktails");
 		if (allCocktails) {
 			setData(JSON.parse(allCocktails));
-			setPopularCocktails(JSON.parse(bestCocktails));
+			setPopularCocktails(JSON.parse(localStorage.getItem("popularCocktails")));
+			setYoutubeCocktails(JSON.parse(localStorage.getItem("youtubeCocktails")));
 		} else getAllCocktails();
 	}, []);
 
@@ -86,29 +86,21 @@ export default function CocktailCards() {
 			[]
 		);
 
-		for (const cocktail of cocktails) {
+		let bestCocktails = [];
+		let videoCocktails = [];
+		cocktails.forEach((cocktail, index) => {
 			cocktail.price = ingredientArray(cocktail).reduce(
 				(sum, ingredient) => sum + INGREDIENTS[ingredient]?.price,
 				0
 			);
-		}
-
-		const bestCocktails = [
-			cocktails[66],
-			cocktails[84],
-			cocktails[275],
-			cocktails[228],
-			cocktails[51],
-			cocktails[47],
-			cocktails[256],
-			cocktails[268],
-			cocktails[237],
-			cocktails[96],
-			cocktails[405],
-			cocktails[236],
-		];
-		localStorage.setItem("popularCocktails", JSON.stringify(bestCocktails));
+			if ([47, 51, 66, 84, 96, 228, 236, 237, 256, 268, 275, 405].includes(index))
+				bestCocktails.push(cocktail);
+			if (cocktail.strVideo) videoCocktails.push(cocktail);
+		});
+		localStorage.setItem("popularCocktails", JSON.stringify(bestCocktails.reverse()));
 		setPopularCocktails(bestCocktails);
+		localStorage.setItem("youtubeCocktails", JSON.stringify(videoCocktails));
+		setYoutubeCocktails(videoCocktails);
 		localStorage.setItem("allCocktails", JSON.stringify(cocktails));
 		setData(cocktails);
 	}
@@ -125,11 +117,8 @@ export default function CocktailCards() {
 		) {
 			setShow(resultSearchCocktail);
 			setHeader(`Search result ${resultSearchCocktail.length}`);
-		} else if (data.length && !searchCocktail.length) {
-			setShow(popularCocktails);
-			setHeader("MOST POPULAR COCKTAILS");
 		}
-	}, [data, popularCocktails, filteredApi, resultSearchCocktail, searchCocktail.length]);
+	}, [data, filteredApi, resultSearchCocktail, searchCocktail.length]);
 
 	const onDouble = (item) => {
 		return {
@@ -146,9 +135,18 @@ export default function CocktailCards() {
 		setShow(result);
 	}
 
-	function popularCocktailsSwitch() {
+	function showPopularCocktails() {
 		setHeader("MOST POPULAR COCKTAILS");
 		setShow(popularCocktails);
+		setSearchCocktail("");
+		setResultSearchCocktail([]);
+	}
+
+	function showYoutubeCocktails() {
+		setHeader("COCKTAILS WITH YOUTUBE VIDEO");
+		setShow(youtubeCocktails);
+		setSearchCocktail("");
+		setResultSearchCocktail([]);
 	}
 	return (
 		<>
@@ -156,10 +154,10 @@ export default function CocktailCards() {
 				<NavBar
 					searchCocktail={searchCocktail}
 					setSearchCocktail={setSearchCocktail}
-					mainPage
 					fetchData={data}
 					popularIngsSwitch={() => setPopularIngs(!popularIngs)}
-					popularCocktailsSwitch={popularCocktailsSwitch}
+					showPopularCocktails={showPopularCocktails}
+					showYoutubeCocktails={showYoutubeCocktails}
 					cartQty={cartQty}
 				/>
 				<div style={{ backgroundColor: "#4052b5" }}>
