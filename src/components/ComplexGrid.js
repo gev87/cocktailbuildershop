@@ -52,7 +52,7 @@ export default function ComplexGrid({ data, close }) {
 					<Grid item>
 						<ButtonBase className={classes.image}>
 							<img
-								style={{ cursor: 'initial' }}
+								style={{ cursor: "initial" }}
 								className={classes.img}
 								alt={data.strDrink}
 								src={data.strDrinkThumb}
@@ -62,100 +62,77 @@ export default function ComplexGrid({ data, close }) {
 					<Grid item xs={12} sm container>
 						<Grid item xs container direction="column" spacing={2}>
 							<Grid item xs className={classes.info}>
-								{data.strIngredient1 ? (
+								{data.strIngredient1 && (
 									<Typography>
 										{data.strIngredient1} : {data.strMeasure1}
-									</Typography>
-								) : (
-									""
-								)}
-								{data.strIngredient2 ? (
+									</Typography>)
+								}
+								{data.strIngredient2 && (
 									<Typography>
 										{data.strIngredient2} : {data.strMeasure2}
 									</Typography>
-								) : (
-									""
 								)}
-								{data.strIngredient3 ? (
+								{data.strIngredient3 && (
 									<Typography>
 										{data.strIngredient3} : {data.strMeasure3}
 									</Typography>
-								) : (
-									""
 								)}
-								{data.strIngredient4 ? (
+								{data.strIngredient4 && (
 									<Typography>
 										{data.strIngredient4} : {data.strMeasure4}
 									</Typography>
-								) : (
-									""
 								)}
-								{data.strIngredient5 ? (
+								{data.strIngredient5 && (
 									<Typography>
 										{data.strIngredient5} : {data.strMeasure5}
 									</Typography>
-								) : (
-									""
 								)}
-								{data.strIngredient6 ? (
+								{data.strIngredient6 && (
 									<Typography>
 										{data.strIngredient6} : {data.strMeasure6}
 									</Typography>
-								) : (
-									""
 								)}
-								{data.strIngredient7 ? (
+								{data.strIngredient7 && (
 									<Typography>
 										{data.strIngredient7} : {data.strMeasure7}
 									</Typography>
-								) : (
-									""
 								)}
-								{data.strIngredient8 ? (
+								{data.strIngredient8 && (
 									<Typography>
 										{data.strIngredient8} : {data.strMeasure8}
 									</Typography>
-								) : (
-									""
 								)}
-								{data.strIngredient9 ? (
+								{data.strIngredient9 && (
 									<Typography>
 										{data.strIngredient9} : {data.strMeasure9}
 									</Typography>
-								) : (
-									""
 								)}
-								{data.strIngredient10 ? (
+								{data.strIngredient10 && (
 									<Typography>
 										{data.strIngredient10} : {data.strMeasure10}
 									</Typography>
-								) : (
-									""
 								)}
-								{data.strIngredient11 ? (
+								{data.strIngredient11 && (
 									<Typography>
 										{data.strIngredient11} : {data.strMeasure11}
 									</Typography>
-								) : (
-									""
 								)}
+								{data.strVideo && (
+									<YouTubeIcon
+										onClick={() => setDialog1Open(true)}
+										style={{
+											fontSize: 150,
+											color: "red",
+											position: "absolute",
+											right:75,
+											cursor: "pointer",
+										}}
+									/>)
+							}
 							</Grid>
 						</Grid>
 						<Grid item>
 							<Typography variant="subtitle1">${data.price}.00</Typography>
-							{data.strVideo ? (
-								<YouTubeIcon
-									onClick={() => setDialog1Open(true)}
-									style={{
-										fontSize: 53,
-										color: "red",
-										margin: "230px 0px 0 0px",
-										cursor: "pointer",
-									}}
-								/>
-							) : (
-								""
-							)}
 						</Grid>
 					</Grid>
 				</Grid>
@@ -165,31 +142,28 @@ export default function ComplexGrid({ data, close }) {
 					style={{ color: "MediumBlue", font: "italic bold 15px monospace" }}
 				>
 					<h3>
-						<p style={{ margin: 0, color: "black", fontSize: 12 }}>
-							Drink Category.
-						</p>{" "}
+						<p style={{ margin: 0, color: "black", fontSize: 12 }}>Drink Category.</p>{" "}
 						{data.strCategory}
 					</h3>
 					<h3>
-						<p style={{ margin: 0, color: "black", fontSize: 12 }}>Alcohol.</p>{" "}
-						{data.strAlcoholic}
+						<p style={{ margin: 0, color: "black", fontSize: 12 }}>Alcohol.</p> {data.strAlcoholic}
 					</h3>
 					<h3>
-						<p style={{ margin: 0, color: "black", fontSize: 12 }}>
-							Instructions.
-						</p>{" "}
+						<p style={{ margin: 0, color: "black", fontSize: 12 }}>Instructions.</p>{" "}
 						{data.strInstructions}
 					</h3>
 				</Grid>
 				<Grid item container>
-					<Button color='secondary'
+					<Button
+						color="secondary"
 						style={{
 							// cursor: "pointer",
-							marginLeft: '90%',
-							padding: 0
-							// BorderStyle: 
+							marginLeft: "90%",
+							padding: 0,
+							// BorderStyle:
 						}}
-						onClick={close}>
+						onClick={close}
+					>
 						Close
 					</Button>
 				</Grid>
