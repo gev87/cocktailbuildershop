@@ -23,8 +23,7 @@ export default function CocktailCards() {
 	const [header, setHeader] = useState("MOST POPULAR COCKTAILS");
 	const [popularIngs, setPopularIngs] = useState(true);
 	const [popularCocktails, setPopularCocktails] = useState([]);
-	const [selectItem, setSelectItem] = useState("");
-	const [openModal, setOpenModal] = useState(false);
+	const [selectedItem, setSelectedItem] = useState("");
 	const [searchCocktail, setSearchCocktail] = useState("");
 	const [resultSearchCocktail, setResultSearchCocktail] = useState([]);
 	const [youtubeCocktails, setYoutubeCocktails] = useState([]);
@@ -180,10 +179,7 @@ export default function CocktailCards() {
 													className={classes.cardMedia}
 													image={cocktail.strDrinkThumb}
 													title={cocktail.strDrink}
-													onClick={() => {
-														setSelectItem(cocktail);
-														setOpenModal(true);
-													}}
+													onClick={() => setSelectedItem(cocktail)}
 												/>
 											</CardActionArea>
 											<CardContent className={classes.cardContent}>
@@ -238,7 +234,7 @@ export default function CocktailCards() {
 								))}
 						</Grid>
 					</Container>
-					<ImgDialog open={openModal} close={() => setOpenModal(false)} data={selectItem} />
+					<ImgDialog open={!!selectedItem} close={() => setSelectedItem(null)} data={selectedItem} />
 				</div>
 			</main>
 		</>
