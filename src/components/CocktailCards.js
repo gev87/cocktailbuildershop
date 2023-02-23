@@ -16,7 +16,7 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 export default function CocktailCards() {
 	const classes = THEMES();
 	const navigate = useNavigate();
-	const { filteredApi, setFilteredApi, onAdd, cartQty } = useContext(CartContext);
+	const { onAdd, cartQty } = useContext(CartContext);
 	const { currentUser } = useContext(MainContext);
 	const [data, setData] = useState([]);
 	const [show, setShow] = useState([]);
@@ -26,7 +26,8 @@ export default function CocktailCards() {
 	const [selectedItem, setSelectedItem] = useState("");
 	const [searchCocktail, setSearchCocktail] = useState("");
 	const [resultSearchCocktail, setResultSearchCocktail] = useState([]);
-	const [youtubeCocktails, setYoutubeCocktails] = useState([]);
+	const [youtubeCocktails,setYoutubeCocktails] = useState([]);
+	const [clearFilters,setClearfilters] = useState(false);
 
 	const ingredientArray = (cocktail) => {
 		return Object.entries(cocktail).reduce((accum, ing) => {
@@ -38,26 +39,37 @@ export default function CocktailCards() {
 	const findAlcoholic = (cocktail) => {
 		return ingredientArray(cocktail).find((ing) => INGREDIENTS[ing]?.isAlcoholic);
 	};
+
+	const handleFilters = (filteredCocktails) => {
+		setClearfilters(false);
+		setSearchCocktail("");
+		setResultSearchCocktail([]);
+		setShow(filteredCocktails);
+		filteredCocktails?.length && setHeader(
+			`${filteredCocktails.length} Filtered ${
+				filteredCocktails.length < 2 ? "Cocktail" : "Cocktails"
+			}`
+		);
+	}
 	useEffect(() => {
 		if (!searchCocktail.length) {
 			setResultSearchCocktail([]);
-			setFilteredApi([]);
+		
 		} else {
 			setResultSearchCocktail(
 				data.filter((item) =>
 					item.strDrink.trim().toLowerCase().includes(searchCocktail.trim().toLowerCase())
 				)
 			);
+				setClearfilters(true);
 		}
-	}, [searchCocktail, data, setFilteredApi]);
+	}, [data, searchCocktail]);
 
 	useEffect(() => {
-		if (filteredApi.length) {
-			setShow(filteredApi);
-		} else if (data.length) {
+	 if (data.length) {
 			setShow(popularCocktails);
 		}
-	}, [data, popularCocktails, filteredApi]);
+	}, [data, popularCocktails]);
 
 	useEffect(() => {
 		const allCocktails = localStorage.getItem("allCocktails");
@@ -105,19 +117,14 @@ export default function CocktailCards() {
 	}
 
 	useEffect(() => {
-		if (filteredApi.length && !resultSearchCocktail.length) {
-			setShow(filteredApi);
-			setHeader(
-				`Filtered ${filteredApi.length < 2 ? "Cocktail" : "Cocktails"} ${filteredApi.length}`
-			);
-		} else if (
+		if (
 			resultSearchCocktail.length ||
 			(!resultSearchCocktail.length && searchCocktail.length)
 		) {
 			setShow(resultSearchCocktail);
 			setHeader(`Search result ${resultSearchCocktail.length}`);
 		}
-	}, [data, filteredApi, resultSearchCocktail, searchCocktail.length]);
+	}, [data, resultSearchCocktail, searchCocktail.length]);
 
 	const onDouble = (item) => {
 		return {
@@ -132,6 +139,7 @@ export default function CocktailCards() {
 		setHeader("Cocktails Maid of " + i);
 		const result = data.filter((cocktail) => ingredientArray(cocktail).includes(i.toLowerCase()));
 		setShow(result);
+		setClearfilters(true);
 	}
 
 	function showPopularCocktails() {
@@ -139,6 +147,7 @@ export default function CocktailCards() {
 		setShow(popularCocktails);
 		setSearchCocktail("");
 		setResultSearchCocktail([]);
+		setClearfilters(true);
 	}
 
 	function showYoutubeCocktails() {
@@ -146,6 +155,7 @@ export default function CocktailCards() {
 		setShow(youtubeCocktails);
 		setSearchCocktail("");
 		setResultSearchCocktail([]);
+		setClearfilters(true);
 	}
 	return (
 		<>
@@ -158,6 +168,8 @@ export default function CocktailCards() {
 					showPopularCocktails={showPopularCocktails}
 					showYoutubeCocktails={showYoutubeCocktails}
 					cartQty={cartQty}
+					handleFilters={handleFilters}
+					removeFilters={clearFilters}
 				/>
 				<div style={{ backgroundColor: "#4052b5" }}>
 					<img width="100%" alt="background" src="/images/cocktailbackground.jpg" />
@@ -234,7 +246,11 @@ export default function CocktailCards() {
 								))}
 						</Grid>
 					</Container>
-					<ImgDialog open={!!selectedItem} close={() => setSelectedItem(null)} data={selectedItem} />
+					<ImgDialog
+						open={!!selectedItem}
+						close={() => setSelectedItem(null)}
+						data={selectedItem}
+					/>
 				</div>
 			</main>
 		</>

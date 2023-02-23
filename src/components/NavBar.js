@@ -22,6 +22,8 @@ export default function MenuAppBar({
 	showDrawer = true,
 	searchCocktail,
 	setSearchCocktail,
+	handleFilters,
+	removeFilters
 }) {
 	const classes = THEMES();
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -29,7 +31,8 @@ export default function MenuAppBar({
 	const [, setError] = useState("");
 	const { currentUser, logout } = useContext(MainContext);
 	const navigate = useNavigate();
-	const [openMenu, setOpenMenu] = useState(false);
+	const [openMenu,setOpenMenu] = useState(false);
+
 	const handleMenu = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
@@ -54,7 +57,7 @@ export default function MenuAppBar({
 	const onClear = () => {
 		setSearchCocktail("");
 	};
-
+	
 	return (
 		<div className={classes.rootnav}>
 			<AppBar style={{ backgroundColor: "#4052b5", color: "white" }}>
@@ -259,10 +262,11 @@ export default function MenuAppBar({
 			</AppBar>
 			{showDrawer && (
 				<MenuDrawer
-					// clearfilterProp={searchCocktail.length}
+					removeFilters={removeFilters}
 					itemData={fetchData}
 					open={openMenu}
 					close={() => setOpenMenu(false)}
+					handleFilters={handleFilters}
 				/>
 			)}
 		</div>
