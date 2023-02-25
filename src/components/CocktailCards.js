@@ -26,8 +26,8 @@ export default function CocktailCards() {
 	const [selectedItem, setSelectedItem] = useState("");
 	const [searchCocktail, setSearchCocktail] = useState("");
 	const [resultSearchCocktail, setResultSearchCocktail] = useState([]);
-	const [youtubeCocktails,setYoutubeCocktails] = useState([]);
-	const [clearFilters,setClearfilters] = useState(false);
+	const [youtubeCocktails, setYoutubeCocktails] = useState([]);
+	const [clearFilters, setClearfilters] = useState(false);
 
 	const ingredientArray = (cocktail) => {
 		return Object.entries(cocktail).reduce((accum, ing) => {
@@ -45,28 +45,29 @@ export default function CocktailCards() {
 		setSearchCocktail("");
 		setResultSearchCocktail([]);
 		setShow(filteredCocktails);
-		filteredCocktails?.length && setHeader(
-			`${filteredCocktails.length} Filtered ${
-				filteredCocktails.length < 2 ? "Cocktail" : "Cocktails"
-			}`
+		setHeader(
+			filteredCocktails?.length &&
+				`${filteredCocktails.length} Filtered ${
+					filteredCocktails.length < 2 ? "Cocktail" : "Cocktails"
+				}`
 		);
-	}
-	useEffect(() => {
-		if (!searchCocktail.length) {
-			setResultSearchCocktail([]);
-		
+	};
+
+	function showSearchResult(searchText) {
+		if (!searchText.length) {
+			showPopularCocktails();
 		} else {
 			setResultSearchCocktail(
 				data.filter((item) =>
-					item.strDrink.trim().toLowerCase().includes(searchCocktail.trim().toLowerCase())
+					item.strDrink.trim().toLowerCase().includes(searchText.trim().toLowerCase())
 				)
 			);
-				setClearfilters(true);
+			setClearfilters(true);
 		}
-	}, [data, searchCocktail]);
+	}
 
 	useEffect(() => {
-	 if (data.length) {
+		if (data.length) {
 			setShow(popularCocktails);
 		}
 	}, [data, popularCocktails]);
@@ -117,10 +118,7 @@ export default function CocktailCards() {
 	}
 
 	useEffect(() => {
-		if (
-			resultSearchCocktail.length ||
-			(!resultSearchCocktail.length && searchCocktail.length)
-		) {
+		if (resultSearchCocktail.length || (!resultSearchCocktail.length && searchCocktail.length)) {
 			setShow(resultSearchCocktail);
 			setHeader(`Search result ${resultSearchCocktail.length}`);
 		}
@@ -161,8 +159,7 @@ export default function CocktailCards() {
 		<>
 			<main>
 				<NavBar
-					searchCocktail={searchCocktail}
-					setSearchCocktail={setSearchCocktail}
+					showSearchResult={showSearchResult}
 					fetchData={data}
 					popularIngsSwitch={() => setPopularIngs(!popularIngs)}
 					showPopularCocktails={showPopularCocktails}

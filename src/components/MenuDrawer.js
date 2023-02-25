@@ -5,7 +5,14 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import THEMES from "../consts/THEMES";
 
-export default function MenuDrawer({ open, close, itemData, handleFilters,removeFilters }) {
+export default function MenuDrawer({
+	open,
+	close,
+	itemData,
+	handleFilters,
+	removeFilters,
+	onClear,
+}) {
 	const classes = THEMES();
 	const [checkedCategory, setCheckedCategory] = useState([]);
 	const [checkedValue, setCheckedValue] = useState([]);
@@ -38,10 +45,11 @@ export default function MenuDrawer({ open, close, itemData, handleFilters,remove
 			(categoryFilter || itemData).filter((item) => checkedValue.includes(item.strCategory));
 		handleFilters(filterResult || categoryFilter);
 		setFilteredCocktails(filterResult || categoryFilter);
+		onClear();
 	}
 
 	useEffect(() => {
-		if(checkedValue.lenght || checkedCategory.length) showFilteredData();
+		if (checkedValue.length || checkedCategory.length) showFilteredData();
 	}, [checkedValue, checkedCategory]);
 
 	function handleChange(event, checkedItems) {
@@ -70,7 +78,7 @@ export default function MenuDrawer({ open, close, itemData, handleFilters,remove
 			</div>
 		);
 	}
-	
+
 	const clearFilter = () => {
 		setCheckedValue([]);
 		setCheckedCategory([]);

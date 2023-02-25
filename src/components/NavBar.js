@@ -20,8 +20,7 @@ export default function MenuAppBar({
 	cartQty,
 	fetchData,
 	showDrawer = true,
-	searchCocktail,
-	setSearchCocktail,
+	showSearchResult,
 	handleFilters,
 	removeFilters
 }) {
@@ -32,6 +31,7 @@ export default function MenuAppBar({
 	const { currentUser, logout } = useContext(MainContext);
 	const navigate = useNavigate();
 	const [openMenu,setOpenMenu] = useState(false);
+	const [searchCocktail, setSearchCocktail] = useState("");
 
 	const handleMenu = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -50,8 +50,9 @@ export default function MenuAppBar({
 			setError("Failed to Log out");
 		}
 	}
-	const onInputValue = (e) => {
-		setSearchCocktail(e.target.value);
+	const onInputValue = (event) => {
+		setSearchCocktail(event.target.value);
+		showSearchResult(event.target.value);
 	};
 
 	const onClear = () => {
@@ -267,6 +268,7 @@ export default function MenuAppBar({
 					open={openMenu}
 					close={() => setOpenMenu(false)}
 					handleFilters={handleFilters}
+					onClear={onClear}
 				/>
 			)}
 		</div>
