@@ -80,16 +80,15 @@ export default function MenuDrawer({
 		);
 	}
 
-	const clearFilter = () => {
+	const clearFilter = (event) => {
 		setCheckedValue([]);
 		setCheckedCategory([]);
-		onClearFilters();
+		if (event) onClearFilters();
 	};
 
-	// useEffect(() => {
-	// 	console.log("removeFilters", removeFilters);
-	// 	if (removeFilters) clearFilter();
-	// }, [removeFilters]);
+	useEffect(() => {
+		if (removeFilters) clearFilter();
+	}, [removeFilters]);
 
 	const list = () => (
 		<div className={classes.list}>
