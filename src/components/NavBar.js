@@ -22,7 +22,8 @@ export default function MenuAppBar({
 	showDrawer = true,
 	showSearchResult,
 	handleFilters,
-	removeFilters
+	removeFilters,
+	onClearFilters,
 }) {
 	const classes = THEMES();
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -30,7 +31,7 @@ export default function MenuAppBar({
 	const [, setError] = useState("");
 	const { currentUser, logout } = useContext(MainContext);
 	const navigate = useNavigate();
-	const [openMenu,setOpenMenu] = useState(false);
+	const [openMenu, setOpenMenu] = useState(false);
 	const [searchCocktail, setSearchCocktail] = useState("");
 
 	const handleMenu = (event) => {
@@ -51,14 +52,25 @@ export default function MenuAppBar({
 		}
 	}
 	const onInputValue = (event) => {
-		setSearchCocktail(event.target.value);
-		showSearchResult(event.target.value);
+		if (event.target.value) {
+			setSearchCocktail(event.target.value);
+			showSearchResult(event.target.value);
+		} else {
+			setSearchCocktail("");
+			showSearchResult("");
+		}
 	};
 
-	const onClear = () => {
+	const onBestCocktailsClick = () => {
 		setSearchCocktail("");
+		showPopularCocktails();
 	};
-	
+
+	const onYoutubeCocktailsClick = () => {
+		setSearchCocktail("");
+		showYoutubeCocktails();
+	};
+
 	return (
 		<div className={classes.rootnav}>
 			<AppBar style={{ backgroundColor: "#4052b5", color: "white" }}>
@@ -117,7 +129,7 @@ export default function MenuAppBar({
 						</IconButton>
 					)}
 					{!!showPopularCocktails && (
-						<IconButton className={classes.title} onClick={showPopularCocktails}>
+						<IconButton className={classes.title} onClick={onBestCocktailsClick}>
 							<img
 								alt="icon"
 								style={{ width: "45px", borderRadius: "30%" }}
@@ -127,7 +139,7 @@ export default function MenuAppBar({
 						</IconButton>
 					)}
 					{!!showYoutubeCocktails && (
-						<IconButton className={classes.title} onClick={showYoutubeCocktails}>
+						<IconButton className={classes.title} onClick={onYoutubeCocktailsClick}>
 							<YouTubeIcon
 								style={{
 									fontSize: 40,
@@ -150,7 +162,7 @@ export default function MenuAppBar({
 							/>
 							<div
 								className={classes.searchIcon}
-								onClick={onClear}
+								onClick={onInputValue}
 								style={{
 									cursor: "pointer",
 									paddingRight: 5,
@@ -268,7 +280,8 @@ export default function MenuAppBar({
 					open={openMenu}
 					close={() => setOpenMenu(false)}
 					handleFilters={handleFilters}
-					onClear={onClear}
+					onClear={() => setSearchCocktail("")}
+					onClearFilters={onClearFilters}
 				/>
 			)}
 		</div>

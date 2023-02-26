@@ -12,6 +12,7 @@ export default function MenuDrawer({
 	handleFilters,
 	removeFilters,
 	onClear,
+	onClearFilters,
 }) {
 	const classes = THEMES();
 	const [checkedCategory, setCheckedCategory] = useState([]);
@@ -49,8 +50,8 @@ export default function MenuDrawer({
 	}
 
 	useEffect(() => {
-		if (checkedValue.length || checkedCategory.length) showFilteredData();
-	}, [checkedValue, checkedCategory]);
+		if (open) showFilteredData();
+	}, [checkedValue.length, checkedCategory.length]);
 
 	function handleChange(event, checkedItems) {
 		return checkedItems.includes(event.target.name)
@@ -82,11 +83,13 @@ export default function MenuDrawer({
 	const clearFilter = () => {
 		setCheckedValue([]);
 		setCheckedCategory([]);
+		onClearFilters();
 	};
 
-	useEffect(() => {
-		if (removeFilters) clearFilter();
-	}, [removeFilters]);
+	// useEffect(() => {
+	// 	console.log("removeFilters", removeFilters);
+	// 	if (removeFilters) clearFilter();
+	// }, [removeFilters]);
 
 	const list = () => (
 		<div className={classes.list}>

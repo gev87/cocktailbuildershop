@@ -24,8 +24,6 @@ export default function CocktailCards() {
 	const [popularIngs, setPopularIngs] = useState(true);
 	const [popularCocktails, setPopularCocktails] = useState([]);
 	const [selectedItem, setSelectedItem] = useState("");
-	const [searchCocktail, setSearchCocktail] = useState("");
-	const [resultSearchCocktail, setResultSearchCocktail] = useState([]);
 	const [youtubeCocktails, setYoutubeCocktails] = useState([]);
 	const [clearFilters, setClearfilters] = useState(false);
 
@@ -42,14 +40,13 @@ export default function CocktailCards() {
 
 	const handleFilters = (filteredCocktails) => {
 		setClearfilters(false);
-		setSearchCocktail("");
-		setResultSearchCocktail([]);
-		setShow(filteredCocktails);
+		setShow(filteredCocktails || data);
 		setHeader(
-			filteredCocktails?.length &&
-				`${filteredCocktails.length} Filtered ${
-					filteredCocktails.length < 2 ? "Cocktail" : "Cocktails"
-				}`
+			filteredCocktails 
+				? `${filteredCocktails.length} Filtered ${
+						filteredCocktails.length < 2 ? "Cocktail" : "Cocktails"
+				  }`
+				: "All Cocktails"
 		);
 	};
 
@@ -57,12 +54,19 @@ export default function CocktailCards() {
 		if (!searchText.length) {
 			showPopularCocktails();
 		} else {
-			setResultSearchCocktail(
+			setShow(
 				data.filter((item) =>
 					item.strDrink.trim().toLowerCase().includes(searchText.trim().toLowerCase())
 				)
 			);
 			setClearfilters(true);
+			setHeader(
+				`Search result ${
+					data.filter((item) =>
+						item.strDrink.trim().toLowerCase().includes(searchText.trim().toLowerCase())
+					).length
+				}`
+			);
 		}
 	}
 
@@ -117,13 +121,6 @@ export default function CocktailCards() {
 		setData(cocktails);
 	}
 
-	useEffect(() => {
-		if (resultSearchCocktail.length || (!resultSearchCocktail.length && searchCocktail.length)) {
-			setShow(resultSearchCocktail);
-			setHeader(`Search result ${resultSearchCocktail.length}`);
-		}
-	}, [data, resultSearchCocktail, searchCocktail.length]);
-
 	const onDouble = (item) => {
 		return {
 			...item,
@@ -143,17 +140,17 @@ export default function CocktailCards() {
 	function showPopularCocktails() {
 		setHeader("MOST POPULAR COCKTAILS");
 		setShow(popularCocktails);
-		setSearchCocktail("");
-		setResultSearchCocktail([]);
 		setClearfilters(true);
 	}
 
 	function showYoutubeCocktails() {
 		setHeader("COCKTAILS WITH YOUTUBE VIDEO");
 		setShow(youtubeCocktails);
-		setSearchCocktail("");
-		setResultSearchCocktail([]);
 		setClearfilters(true);
+	}
+
+	function onClearFilters() {
+		showPopularCocktails();
 	}
 	return (
 		<>
@@ -167,6 +164,7 @@ export default function CocktailCards() {
 					cartQty={cartQty}
 					handleFilters={handleFilters}
 					removeFilters={clearFilters}
+					onClearFilters={onClearFilters}
 				/>
 				<div style={{ backgroundColor: "#4052b5" }}>
 					<img width="100%" alt="background" src="/images/cocktailbackground.jpg" />
