@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Button, Container, CardActions, CardContent } from "@material-ui/core";
 import { CardMedia, Grid, Typography, Card, Icon } from "@material-ui/core";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
@@ -15,10 +15,10 @@ import { CartContext } from "../context/CartContext";
 export default function Basket() {
 	const classes = THEMES();
 	const { currentUser } = useContext(MainContext);
-	const { cart, setCart, cartQty, setCartQty } = useContext(CartContext);
+	const { cart, setCart, cartQty, setCartQty, getCart } = useContext(CartContext);
 	const navigate = useNavigate();
 
-	const addItemToCart = (card, func) => {
+	const addItemToCart = async (card, func) => {
 		const item = Object.entries(cart).find(
 			(e) => e[1].order.idDrink === (func ? func(card).idDrink : card.idDrink)
 		);
@@ -27,34 +27,39 @@ export default function Basket() {
 					order: func ? func(card) : card,
 					quantity: 1,
 			  })
-			: updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {
+			: await updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {
 					quantity: ++item[1].quantity,
 			  });
 
-		readOnceGet(`users/${currentUser.uid}/orders`, (items) => setCart(items || {}));
-		setCartQty(cartQty + 1);
+		const cartData = await readOnceGet(`users/${currentUser.uid}/orders`);
+		setCart(cartData || {});
+		setCartQty((qty) => ++qty);
 	};
 
-	const removeItemFromCart = (card, func) => {
+	const removeItemFromCart = async (card, func) => {
 		const item = Object.entries(cart).find(
 			(e) => e[1].order.idDrink === (func ? func(card).idDrink : card.idDrink)
 		);
 		item[1].quantity <= 1
 			? removeAsync(`users/${currentUser.uid}/orders/${item[0]}`)
-			: updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {
+			: await updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {
 					quantity: --item[1].quantity,
 			  });
 
-		readOnceGet(`users/${currentUser.uid}/orders`, (items) => setCart(items || {}));
-
-		setCartQty(cartQty - 1);
+		const cartData = await readOnceGet(`users/${currentUser.uid}/orders`);
+		setCart(cartData || {});
+		setCartQty((qty) => --qty);
 	};
 
-	const clearAll = (currentUser) => {
+	function clearAll(currentUser) {
 		removeAsync(`users/${currentUser.uid}/orders`);
 		setCart({});
 		setCartQty(null);
-	};
+	}
+
+	useEffect(() => {
+		getCart();
+	}, [currentUser]);
 
 	return (
 		<React.Fragment>
@@ -69,7 +74,7 @@ export default function Basket() {
 							What is the difference between a blonde and a shopping cart? Sometimes, the shopping
 							cart has a mind of its own.
 						</Typography>
-						{!Object.keys(cart).length ? (
+						{!cartQty ? (
 							<img
 								alt="cart"
 								src="https://www.vinsolutions.com/wp-content/uploads/sites/2/vinsolutions/media/Vin-Images/news-blog/Empty_Shopping_Cart_blog.jpg"

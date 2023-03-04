@@ -6,7 +6,7 @@ import { MainContext } from "./MainContext";
 export const CartContext = createContext();
 
 export const CartProvider = (props) => {
-	const [cart, setCart] = useState([]);
+	const [cart, setCart] = useState({});
 	const { currentUser } = useContext(MainContext);
 	const [cartQty, setCartQty] = useState(null);
 
@@ -14,7 +14,7 @@ export const CartProvider = (props) => {
 		return Object.values(data).reduce((amount, cocktail) => amount + cocktail.quantity, 0);
 	}
 
-	function getCartQty() {
+	function getCart() {
 		if (currentUser) {
 			readOnceGet(`users/${currentUser.uid}/orders`, (items) => {
 				setCart(items || {});
@@ -24,67 +24,33 @@ export const CartProvider = (props) => {
 	}
 
 	useEffect(() => {
-		getCartQty();
+		getCart();
 	}, [currentUser]);
 
-	// const onAdd = (item) => {
-	// 	const exist = cart.find((x) => x.idDrink === item.idDrink);
-	// 	if (exist) {
-	// 		setCart(cart.map((x) => (x.idDrink === item.idDrink ? { ...exist, qty: exist.qty + 1 } : x)));
-	// 	} else {
-	// 		setCart([...cart, { ...item, qty: 1 }]);
-	// 	}
-	// };
-	const onAdd = (card, func) => {
+
+	async function onAdd (card, func){
 		if (currentUser) {
-				readOnceGet(`users/${currentUser.uid}/orders`, (items) => {
-					const item =
-						items &&
-						Object.values(items).find(
-							(cocktail) => cocktail.order.idDrink === (func ? func(card).idDrink : card.idDrink)
-						);
-					!item
-						? writeAsync(`users/${currentUser.uid}/orders`, {
-								order: func ? func(card) : card,
-								quantity: 1,
-						  })
-						: updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {
-								quantity: ++item[1].quantity,
-						  });
+			const items = await readOnceGet(`users/${currentUser.uid}/orders`);
+			const item =
+				items &&
+				Object.entries(items).find(
+					(cocktail) => cocktail[1].order.idDrink === (func ? func(card).idDrink : card.idDrink)
+				);
+			!item
+				? writeAsync(`users/${currentUser.uid}/orders`, {
+						order: func ? func(card) : card,
+						quantity: 1,
+				  })
+				: await updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {
+						quantity: ++item[1].quantity,
 				});
-				setCartQty(cartQty + 1);
+			setCartQty((qty) => ++qty);
 		}
 	};
 
-	const onRemove = (item) => {
-		const exist = cart.find((x) => x.idDrink === item.idDrink);
-		if (exist.qty === 1) {
-			setCart(cart.filter((x) => x.idDrink !== item.idDrink));
-		} else {
-			setCart(cart.map((x) => (x.idDrink === item.idDrink ? { ...exist, qty: exist.qty - 1 } : x)));
-		}
-	};
-
-	const onDouble = (item) => {
-		let obj = {
-			...item,
-			idDrink: item.idDrink + "double",
-			strDrink: item.strDrink + " DOUBLE",
-			price: item.price + PRICES[item.strIngredient1],
-		};
-
-		const exist = cart.find((x) => x.idDrink === obj.idDrink);
-		if (exist) {
-			setCart(cart.map((x) => (x.idDrink === obj.idDrink ? { ...exist, qty: exist.qty + 1 } : x)));
-		} else {
-			setCart([...cart, { ...obj, qty: 1 }]);
-		}
-	};
 
 	return (
-		<CartContext.Provider
-			value={{ cart, setCart, onAdd, onRemove, cartQty, setCartQty }}
-		>
+		<CartContext.Provider value={{ cart, setCart, onAdd, cartQty, setCartQty, getCart }}>
 			{props.children}
 		</CartContext.Provider>
 	);
