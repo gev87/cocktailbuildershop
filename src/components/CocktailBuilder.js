@@ -70,18 +70,15 @@ function CustomCocktail() {
 
 	return (
 		<div>
-			<NavBar showDrawer={false} cartQty={cartQty} />
+			<NavBar cartQty={cartQty} />
 			<Container maxWidth="sm">
-				{error[2] === "n" ? (
-					<div>
-						<Alert variant="filled">{error}</Alert>
-					</div>
-				) : (
-					error && (
-						<Alert variant="filled" severity="error">
-							{error}
-						</Alert>
-					)
+				{error && (
+					<Alert
+						variant="filled"
+						severity={error.startsWith("Congratulations") ? "success" : "error"}
+					>
+						{error}
+					</Alert>
 				)}
 			</Container>
 			<div

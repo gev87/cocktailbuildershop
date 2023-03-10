@@ -49,7 +49,7 @@ export default function Basket() {
 
 	return (
 		<React.Fragment>
-			<NavBar cartQty={cartQty} showDrawer={false} />
+			<NavBar cartQty={cartQty}/>
 			<main>
 				<div className={classes.heroContent}>
 					<Container maxWidth="sm">
@@ -89,8 +89,8 @@ export default function Basket() {
 										fontSize="small"
 									/>
 									Order All for $
-									{Object.entries(cart).reduce((cur, elem) => {
-										return cur + elem[1].quantity * elem[1].order.price;
+									{Object.values(cart).reduce((cur, elem) => {
+										return cur + elem.quantity * elem.order.price;
 									}, 0)}
 									.00
 								</Button>{" "}

@@ -19,7 +19,7 @@ export default function MenuAppBar({
 	showYoutubeCocktails,
 	cartQty,
 	fetchData,
-	showDrawer = true,
+	showDrawer = false,
 	showSearchResult,
 	handleFilters,
 	removeFilters,

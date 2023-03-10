@@ -28,7 +28,7 @@ export const CartProvider = (props) => {
 
 	async function onAdd(card, func, cart) {
 		if (currentUser) {
-			const items = !cart && (await readOnceGet(`users/${currentUser.uid}/orders`));
+			const items = cart || (await readOnceGet(`users/${currentUser.uid}/orders`));
 			const item =
 				items &&
 				Object.entries(items).find(

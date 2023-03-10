@@ -51,7 +51,6 @@ export default function Payment() {
 					(cur, elem) => cur + elem.quantity,
 					0
 				)}
-				showDrawer={false}
 			/>
 			
 			

@@ -165,6 +165,7 @@ export default function CocktailCards() {
 					handleFilters={handleFilters}
 					removeFilters={clearFilters}
 					onClearFilters={onClearFilters}
+					showDrawer
 				/>
 				<div style={{ backgroundColor: "#4052b5" }}>
 					<img width="100%" alt="background" src="/images/cocktailbackground.jpg" />
