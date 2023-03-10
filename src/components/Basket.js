@@ -5,7 +5,7 @@ import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import THEMES from "../consts/THEMES";
-import { readOnceGet, writeAsync, updateAsync, removeAsync } from "../firebase/crudoperations";
+import { readOnceGet, updateAsync, removeAsync } from "../firebase/crudoperations";
 import { MainContext } from "../context/MainContext";
 import ShopIcon from "@material-ui/icons/Shop";
 import RemoveShoppingCartOutlinedIcon from "@material-ui/icons/RemoveShoppingCartOutlined";
@@ -15,31 +15,17 @@ import { CartContext } from "../context/CartContext";
 export default function Basket() {
 	const classes = THEMES();
 	const { currentUser } = useContext(MainContext);
-	const { cart, setCart, cartQty, setCartQty, getCart } = useContext(CartContext);
+	const { cart, setCart, cartQty, setCartQty, getCart, onAdd } = useContext(CartContext);
 	const navigate = useNavigate();
 
-	const addItemToCart = async (card, func) => {
-		const item = Object.entries(cart).find(
-			(e) => e[1].order.idDrink === (func ? func(card).idDrink : card.idDrink)
-		);
-		!item
-			? writeAsync(`users/${currentUser.uid}/orders`, {
-					order: func ? func(card) : card,
-					quantity: 1,
-			  })
-			: await updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {
-					quantity: ++item[1].quantity,
-			  });
-
+	const addItemToCart = async (card) => {
+		await onAdd(card, undefined, cart);
 		const cartData = await readOnceGet(`users/${currentUser.uid}/orders`);
 		setCart(cartData || {});
-		setCartQty((qty) => ++qty);
 	};
 
-	const removeItemFromCart = async (card, func) => {
-		const item = Object.entries(cart).find(
-			(e) => e[1].order.idDrink === (func ? func(card).idDrink : card.idDrink)
-		);
+	const removeItemFromCart = async (card) => {
+		const item = Object.entries(cart).find((e) => e[1].order.idDrink === card.idDrink);
 		item[1].quantity <= 1
 			? removeAsync(`users/${currentUser.uid}/orders/${item[0]}`)
 			: await updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {

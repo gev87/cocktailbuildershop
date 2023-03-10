@@ -1,5 +1,4 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import PRICES from "../consts/PRICES";
 import { writeAsync, readOnceGet, updateAsync } from "../firebase/crudoperations";
 import { MainContext } from "./MainContext";
 
@@ -27,10 +26,9 @@ export const CartProvider = (props) => {
 		getCart();
 	}, [currentUser]);
 
-
-	async function onAdd (card, func){
+	async function onAdd(card, func, cart) {
 		if (currentUser) {
-			const items = await readOnceGet(`users/${currentUser.uid}/orders`);
+			const items = !cart && (await readOnceGet(`users/${currentUser.uid}/orders`));
 			const item =
 				items &&
 				Object.entries(items).find(
@@ -43,7 +41,7 @@ export const CartProvider = (props) => {
 				  })
 				: await updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {
 						quantity: ++item[1].quantity,
-				});
+				  });
 			setCartQty((qty) => ++qty);
 		}
 	};
