@@ -37,7 +37,7 @@ export default function Basket() {
 		setCartQty((qty) => --qty);
 	};
 
-	function clearAll(currentUser) {
+	function clearAll() {
 		removeAsync(`users/${currentUser.uid}/orders`);
 		setCart({});
 		setCartQty(null);
@@ -49,7 +49,7 @@ export default function Basket() {
 
 	return (
 		<React.Fragment>
-			<NavBar cartQty={cartQty}/>
+			<NavBar cartQty={cartQty} />
 			<main>
 				<div className={classes.heroContent}>
 					<Container maxWidth="sm">
@@ -68,7 +68,7 @@ export default function Basket() {
 						) : (
 							<div style={{ display: "flex" }}>
 								<Button
-									onClick={() => clearAll(currentUser)}
+									onClick={clearAll}
 									fullWidth
 									variant="contained"
 									size="small"
@@ -102,8 +102,8 @@ export default function Basket() {
 				<Container className={classes.cardGrid} maxWidth="md">
 					<Grid container spacing={4}>
 						{Object.entries(cart).map((it) => {
-							let card = it[1].order;
-							let qty = it[1].quantity;
+							const card = it[1].order;
+							const qty = it[1].quantity;
 
 							return (
 								<Grid item key={it[0]} xs={12} sm={6} md={4}>
@@ -114,16 +114,12 @@ export default function Basket() {
 											title={card.strDrink}
 										/>
 										<CardContent className={classes.cardContent}>
-											{card.strDrink.split(" ")[card.strDrink.split(" ").length - 1] ===
-											"DOUBLE" ? (
-												<Typography color="secondary" gutterBottom variant="h5" component="h2">
-													{card.strDrink} <Typography>with extra {card.strIngredient1}</Typography>
-												</Typography>
-											) : (
-												<Typography gutterBottom variant="h5" component="h2">
-													{card.strDrink}
-												</Typography>
-											)}
+											<Typography color="secondary" gutterBottom variant="h5" component="h2">
+												{card.strDrink}{" "}
+												{card.strDrink.endsWith("DOUBLE") && (
+													<Typography>with extra {card.strIngredient1}</Typography>
+												)}
+											</Typography>
 											<Typography>{card.strCategory}</Typography>
 										</CardContent>
 										<Button
