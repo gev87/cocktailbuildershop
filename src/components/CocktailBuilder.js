@@ -3,7 +3,7 @@ import { Container, Typography, Button, TextField } from "@material-ui/core";
 import NavBar from "./NavBar";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import PRICESARR from "../consts/PRICESARR";
-import PRICES from "../consts/PRICES";
+import INGREDIENTS from "../consts/PRICES";
 import { Alert } from "@mui/material";
 import { MainContext } from "../context/MainContext";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
@@ -27,23 +27,6 @@ function CustomCocktail() {
 	const navigate = useNavigate();
 	const fieldStyle = { width: 250, padding: "15px 0px" };
 
-	const obj = {
-		idDrink: ingredient1 + ingredient2 + ingredient3 + ingredient4 + cocktailName,
-		price:
-			PRICES[ingredient1.toLowerCase()] +
-			PRICES[ingredient2.toLowerCase()] +
-			(PRICES[ingredient3.toLowerCase()] || 0) +
-			(PRICES[ingredient4.toLowerCase()] || 0) +
-			3,
-		strDrink: cocktailName,
-		strCategory: currentUser?.displayName + "'s Creation",
-		strDrinkThumb: "/images/cocktail1.jpg",
-		strIngredient1: ingredient1,
-		strIngredient2: ingredient2,
-		strIngredient3: ingredient3,
-		strIngredient4: ingredient4,
-	};
-
 	function handleSubmit(event) {
 		if (!currentUser) {
 			return setError("Please Sign In");
@@ -56,6 +39,22 @@ function CustomCocktail() {
 			return setError(`${name} ${ing1} ${ing2} ${isOrAre} REQUIRED`);
 		}
 		setError("Congratulations! You have made a new cocktail");
+		const obj = {
+			idDrink: ingredient1 + ingredient2 + ingredient3 + ingredient4 + cocktailName,
+			price:
+				INGREDIENTS[ingredient1].price +
+				INGREDIENTS[ingredient2].price +
+				(INGREDIENTS[ingredient3]?.price || 0) +
+				(INGREDIENTS[ingredient3]?.price || 0) +
+				3,
+			strDrink: cocktailName,
+			strCategory: currentUser?.displayName + "'s Creation",
+			strDrinkThumb: "/images/cocktail1.jpg",
+			strIngredient1: ingredient1,
+			strIngredient2: ingredient2,
+			strIngredient3: ingredient3,
+			strIngredient4: ingredient4,
+		};
 		event.target.innerText === "ADD TO CART" ? onAdd(obj) : setTimeout(navigate, 2000, "/payment");
 	}
 
@@ -93,19 +92,16 @@ function CustomCocktail() {
 				<div style={{ paddingTop: "20px" }}>
 					<TextField
 						inputProps={{ className: classes.input }}
-						onChange={(e) => setCocktailName(e.target.value)}
+						onChange={(event) => setCocktailName(event.target.value)}
 						variant="outlined"
 						label="COCKTAIL NAME"
 						value={cocktailName}
 						style={fieldStyle}
 						color="secondary"
 					/>
-
 					<Autocomplete
 						classes={{ inputRoot: classes.input }}
-						onInputChange={(event, newInputvalue) => {
-							setIngredient1(newInputvalue);
-						}}
+						onInputChange={(event, newInputvalue) => setIngredient1(newInputvalue)}
 						inputValue={ingredient1}
 						id="controllable-states-demo"
 						options={PRICESARR}
@@ -118,9 +114,7 @@ function CustomCocktail() {
 					<Autocomplete
 						classes={{ inputRoot: classes.input }}
 						inputValue={ingredient2}
-						onInputChange={(event, newInputvalue) => {
-							setIngredient2(newInputvalue);
-						}}
+						onInputChange={(event, newInputvalue) => setIngredient2(newInputvalue)}
 						id="controllable-states-demo"
 						options={PRICESARR}
 						getOptionLabel={(option) => option.ingredient}
@@ -132,9 +126,7 @@ function CustomCocktail() {
 					<Autocomplete
 						classes={{ inputRoot: classes.input }}
 						inputValue={ingredient3}
-						onInputChange={(event, newInputvalue) => {
-							setIngredient3(newInputvalue);
-						}}
+						onInputChange={(event, newInputvalue) => setIngredient3(newInputvalue)}
 						id="controllable-states-demo"
 						options={PRICESARR}
 						getOptionLabel={(option) => option.ingredient}
@@ -146,9 +138,7 @@ function CustomCocktail() {
 					<Autocomplete
 						classes={{ inputRoot: classes.input }}
 						inputValue={ingredient4}
-						onInputChange={(event, newInputvalue) => {
-							setIngredient4(newInputvalue);
-						}}
+						onInputChange={(event,newInputvalue) => setIngredient4(newInputvalue)}
 						id="controllable-states-demo"
 						options={PRICESARR}
 						getOptionLabel={(option) => option.ingredient}

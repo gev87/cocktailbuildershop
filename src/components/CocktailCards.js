@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Button, Card, CardActions, CardContent } from "@material-ui/core";
 import { CardMedia, Grid, Typography, Container } from "@material-ui/core";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
-import { INGREDIENTS } from "../consts/PRICES";
+import INGREDIENTS  from "../consts/PRICES";
 import THEMES from "../consts/THEMES";
 import CustomSwiper from "./CustomSwiper";
 import { MainContext } from "../context/MainContext";
