@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { makeStyles, Grid, Paper } from "@material-ui/core";
-import { Typography, ButtonBase } from "@material-ui/core";
+import { Typography, ButtonBase, Button } from "@material-ui/core";
 import YouTubeIcon from "@material-ui/icons/YouTube";
 import PlayerDialog from "./PlayerDialog";
-import { Button } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
