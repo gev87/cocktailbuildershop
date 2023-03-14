@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import ButtonBase from "@material-ui/core/ButtonBase";
+import { makeStyles, Grid, Paper } from "@material-ui/core";
+import { Typography, ButtonBase } from "@material-ui/core";
 import YouTubeIcon from "@material-ui/icons/YouTube";
-import PlayerDialog from './PlayerDialog'
+import PlayerDialog from "./PlayerDialog";
 import { Button } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
@@ -38,16 +35,17 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ComplexGrid({ data, close }) {
 	const classes = useStyles();
-	const [openDlg1Dialog,setDialog1Open] = useState(false);
+	const [openDlg1Dialog, setDialog1Open] = useState(false);
 	const commonStyle = { margin: 0, color: "black", fontSize: 12 };
-	
+
 	const ingredientProportion = (cocktail) => {
 		return Object.entries(cocktail).reduce((accum, ing) => {
-			if (ing[0].includes("strIngredient") && ing[1]) accum.push(
-				<Typography key={ing[0]}>
-					{ing[1] + " : " + cocktail[`strMeasure${ing[0].at(-1)}`]}
-				</Typography>
-			);
+			if (ing[0].includes("strIngredient") && ing[1])
+				accum.push(
+					<Typography key={ing[0]}>
+						{ing[1] + " : " + cocktail[`strMeasure${ing[0].at(-1)}`]}
+					</Typography>
+				);
 			return accum;
 		}, []);
 	};
