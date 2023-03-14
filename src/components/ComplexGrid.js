@@ -98,11 +98,7 @@ export default function ComplexGrid({ data, close }) {
 				>
 					<h3>
 						<p style={commonStyle}>Drink Category.</p> {data.strCategory}
-					</h3>
-					<h3>
 						<p style={commonStyle}>Alcohol.</p> {data.strAlcoholic}
-					</h3>
-					<h3>
 						<p style={commonStyle}>Instructions.</p> {data.strInstructions}
 					</h3>
 				</Grid>
