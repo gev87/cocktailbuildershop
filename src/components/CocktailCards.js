@@ -94,7 +94,7 @@ export default function CocktailCards() {
 			const response = urls.map(async (url) => await fetch(url));
 			const json = await Promise.all(response);
 			allCocktails = await Promise.all(json.map(async (item) => await item.json()));
-		} catch {
+		} catch(err) {
 			return [];
 		}
 		const cocktails = allCocktails.reduce(
@@ -102,8 +102,8 @@ export default function CocktailCards() {
 			[]
 		);
 
-		let bestCocktails = [];
-		let videoCocktails = [];
+		const bestCocktails = [];
+		const videoCocktails = [];
 		cocktails.forEach((cocktail, index) => {
 			cocktail.price = ingredientArray(cocktail).reduce(
 				(sum, ingredient) => sum + INGREDIENTS[ingredient]?.price,

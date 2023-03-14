@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme) => ({
 	},
 	info: {
 		maxHeight: 300,
-		// marginTop: "20%",
 		font: "italic bold 15px monospace",
 	},
 	category: {
@@ -39,7 +38,19 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ComplexGrid({ data, close }) {
 	const classes = useStyles();
-	const [openDlg1Dialog, setDialog1Open] = useState(false);
+	const [openDlg1Dialog,setDialog1Open] = useState(false);
+	const commonStyle = { margin: 0, color: "black", fontSize: 12 };
+	
+	const ingredientProportion = (cocktail) => {
+		return Object.entries(cocktail).reduce((accum, ing) => {
+			if (ing[0].includes("strIngredient") && ing[1]) accum.push(
+				<Typography key={ing[0]}>
+					{ing[1] + " : " + cocktail[`strMeasure${ing[0].at(-1)}`]}
+				</Typography>
+			);
+			return accum;
+		}, []);
+	};
 	return (
 		<div className={classes.root}>
 			<PlayerDialog
@@ -62,61 +73,7 @@ export default function ComplexGrid({ data, close }) {
 					<Grid item xs={12} sm container>
 						<Grid item xs container direction="column" spacing={2}>
 							<Grid item xs className={classes.info}>
-								{data.strIngredient1 && (
-									<Typography>
-										{data.strIngredient1} : {data.strMeasure1}
-									</Typography>)
-								}
-								{data.strIngredient2 && (
-									<Typography>
-										{data.strIngredient2} : {data.strMeasure2}
-									</Typography>
-								)}
-								{data.strIngredient3 && (
-									<Typography>
-										{data.strIngredient3} : {data.strMeasure3}
-									</Typography>
-								)}
-								{data.strIngredient4 && (
-									<Typography>
-										{data.strIngredient4} : {data.strMeasure4}
-									</Typography>
-								)}
-								{data.strIngredient5 && (
-									<Typography>
-										{data.strIngredient5} : {data.strMeasure5}
-									</Typography>
-								)}
-								{data.strIngredient6 && (
-									<Typography>
-										{data.strIngredient6} : {data.strMeasure6}
-									</Typography>
-								)}
-								{data.strIngredient7 && (
-									<Typography>
-										{data.strIngredient7} : {data.strMeasure7}
-									</Typography>
-								)}
-								{data.strIngredient8 && (
-									<Typography>
-										{data.strIngredient8} : {data.strMeasure8}
-									</Typography>
-								)}
-								{data.strIngredient9 && (
-									<Typography>
-										{data.strIngredient9} : {data.strMeasure9}
-									</Typography>
-								)}
-								{data.strIngredient10 && (
-									<Typography>
-										{data.strIngredient10} : {data.strMeasure10}
-									</Typography>
-								)}
-								{data.strIngredient11 && (
-									<Typography>
-										{data.strIngredient11} : {data.strMeasure11}
-									</Typography>
-								)}
+								{ingredientProportion(data)}
 								{data.strVideo && (
 									<YouTubeIcon
 										onClick={() => setDialog1Open(true)}
@@ -124,11 +81,11 @@ export default function ComplexGrid({ data, close }) {
 											fontSize: 150,
 											color: "red",
 											position: "absolute",
-											right:75,
+											right: 75,
 											cursor: "pointer",
 										}}
-									/>)
-							}
+									/>
+								)}
 							</Grid>
 						</Grid>
 						<Grid item>
@@ -142,25 +99,21 @@ export default function ComplexGrid({ data, close }) {
 					style={{ color: "MediumBlue", font: "italic bold 15px monospace" }}
 				>
 					<h3>
-						<p style={{ margin: 0, color: "black", fontSize: 12 }}>Drink Category.</p>{" "}
-						{data.strCategory}
+						<p style={commonStyle}>Drink Category.</p> {data.strCategory}
 					</h3>
 					<h3>
-						<p style={{ margin: 0, color: "black", fontSize: 12 }}>Alcohol.</p> {data.strAlcoholic}
+						<p style={commonStyle}>Alcohol.</p> {data.strAlcoholic}
 					</h3>
 					<h3>
-						<p style={{ margin: 0, color: "black", fontSize: 12 }}>Instructions.</p>{" "}
-						{data.strInstructions}
+						<p style={commonStyle}>Instructions.</p> {data.strInstructions}
 					</h3>
 				</Grid>
 				<Grid item container>
 					<Button
 						color="secondary"
 						style={{
-							// cursor: "pointer",
 							marginLeft: "90%",
 							padding: 0,
-							// BorderStyle:
 						}}
 						onClick={close}
 					>
