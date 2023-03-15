@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Button, Card, CardActions, CardContent } from "@material-ui/core";
 import { CardMedia, Grid, Typography, Container } from "@material-ui/core";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
-import INGREDIENTS  from "../consts/PRICES";
+import INGREDIENTS from "../consts/PRICES";
 import THEMES from "../consts/THEMES";
 import CustomSwiper from "./CustomSwiper";
 import { MainContext } from "../context/MainContext";
@@ -42,7 +42,7 @@ export default function CocktailCards() {
 		setClearfilters(false);
 		setShow(filteredCocktails || data);
 		setHeader(
-			filteredCocktails 
+			filteredCocktails
 				? `${filteredCocktails.length} Filtered ${
 						filteredCocktails.length < 2 ? "Cocktail" : "Cocktails"
 				  }`
@@ -94,7 +94,7 @@ export default function CocktailCards() {
 			const response = urls.map(async (url) => await fetch(url));
 			const json = await Promise.all(response);
 			allCocktails = await Promise.all(json.map(async (item) => await item.json()));
-		} catch(err) {
+		} catch (err) {
 			return [];
 		}
 		const cocktails = allCocktails.reduce(
@@ -130,9 +130,9 @@ export default function CocktailCards() {
 		};
 	};
 
-	function filterByIngredient(i) {
-		setHeader("Cocktails Maid of " + i);
-		const result = data.filter((cocktail) => ingredientArray(cocktail).includes(i.toLowerCase()));
+	function filterByIngredient(ing) {
+		setHeader("Cocktails Maid of " + ing);
+		const result = data.filter((cocktail) => ingredientArray(cocktail).includes(ing.toLowerCase()));
 		setShow(result);
 		setClearfilters(true);
 	}

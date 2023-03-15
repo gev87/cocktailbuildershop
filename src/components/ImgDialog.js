@@ -1,7 +1,5 @@
 import React, { forwardRef } from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import Slide from '@material-ui/core/Slide';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Slide, Dialog } from '@material-ui/core';
 import ComplexGrid from './ComplexGrid'
 const useStyles = makeStyles({
 	root: {
@@ -20,8 +18,6 @@ export default function AlertDialogSlide({ open, close, data }) {
 		<div className={classes.root}>
 			<Dialog
 				style={{ zIndex: 1700, }}
-				maxWidth={false}
-				// paperFullWidth
 				open={open}
 				TransitionComponent={Transition}
 				keepMounted

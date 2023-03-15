@@ -1,14 +1,11 @@
 import React, {useMemo} from "react";
-// Import Swiper React components
 import { Swiper,SwiperSlide } from "swiper/react";
 import { Typography } from "@material-ui/core";
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import "../styles.css";
 import "swiper/css/navigation";
-// import required modules
 import { EffectCoverflow, Pagination,Navigation } from "swiper";
 
 export default function CustomSwiper({filterByIngredient}) {
@@ -32,7 +29,6 @@ export default function CustomSwiper({filterByIngredient}) {
 		[]
 	);
 
-
 	return (
 		<div style={{ backgroundColor: "black", color: "#4052b5" }}>
 			<Typography variant="h5" align="center" paragraph>
@@ -41,12 +37,11 @@ export default function CustomSwiper({filterByIngredient}) {
 
 			<Swiper
 				style={{ backgroundColor: "#4052b5" }}
-				loop={true}
-				// zoom={true}
+				loop
 				effect={"coverflow"}
-				grabCursor={true}
-				centeredSlides={true}
-				centeredSlidesBounds={true}
+				grabCursor
+				centeredSlides
+				centeredSlidesBounds
 				slidesPerView={5}
 				spaceBetween={50}
 				scrollbar={{
@@ -63,14 +58,12 @@ export default function CustomSwiper({filterByIngredient}) {
 				pagination={{
 					clickable: true,
 				}}
-				navigation={true}
-				
+				navigation
 				modules={[EffectCoverflow, Pagination, Navigation]}
 				className="mySwiper"
 			>
 				{ingredients.map((ingredient, index) => {
 					return (
-					
 						<SwiperSlide key={ingredient + index}>
 								<img
 									onClick={() => filterByIngredient(ingredient)}

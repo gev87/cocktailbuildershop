@@ -19,7 +19,7 @@ export default function Footer() {
 	const classes = THEMES();
 	return (
 		<div>
-				<footer className={classes.footer}>
+			<footer className={classes.footer}>
 				<Copyright />
 			</footer>
 		</div>
