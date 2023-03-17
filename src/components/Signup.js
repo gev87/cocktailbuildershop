@@ -19,7 +19,6 @@ export default function Signup() {
   const [show, setShow] = useState("password");
   const navigate = useNavigate();
   const nameRef = useRef();
-  const [, setLoading] = useState(true);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -34,7 +33,6 @@ export default function Signup() {
     }
     try {
       setError("");
-      setLoading(true);
       await signup(
         emailRef.current.value,
         passwordRef.current.value,
@@ -44,7 +42,6 @@ export default function Signup() {
     } catch (e) {
       setError("Failed to create an account");
     }
-    setLoading(false);
   }
 
   return currentUser ? (

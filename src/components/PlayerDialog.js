@@ -17,8 +17,6 @@ export default function PlayerDialog({ open, close, videoUrl }) {
 			>
 				<ReactPlayer
 					style={{
-						// padding: 0,
-						// margin: 0,
 						maxWidth: "100%"
 					}}
 					config={{
