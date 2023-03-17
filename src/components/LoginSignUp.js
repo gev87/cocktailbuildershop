@@ -35,7 +35,6 @@ const StyledMenuItem = withStyles((theme) => ({
 		'&:focus': {
 			backgroundColor: theme.palette.primary.main,
 		},
-		// padding: 0,
 	},
 }))(MenuItem);
 
@@ -70,7 +69,6 @@ export default function LoginSignUp() {
 	const { login, signup } = useContext(MainContext);
 	const emailRef = useRef();
 	const [error, setError] = useState("");
-	const [, setLoading] = useState(true);
 	const passwordRef = useRef();
 	const passwordConfirmRef = useRef();
 	const nameRef = useRef();
@@ -83,7 +81,6 @@ export default function LoginSignUp() {
 		try {
 			setError("");
 			 await login(emailRef.current.value,passwordRef.current.value);
-			// navigate("/");
 		} catch {
 			setError("Failed to sign in");
 		return
@@ -91,7 +88,6 @@ export default function LoginSignUp() {
 		setOpenLD(false);
 	}
 	async function handleSubmitSignUp(e) {
-	setLoading(false);
 		e.preventDefault();
 		if (passwordRef.current.value !== passwordConfirmRef.current.value) {
 			return setError("Passwords do NOT match");
@@ -105,21 +101,16 @@ export default function LoginSignUp() {
 		}
 		try {
 			setError("");
-			setLoading(true);
 			await signup(
 				emailRef.current.value,
 				passwordRef.current.value,
 				nameRef.current.value
 			).catch(() => {});;
-			// navigate("/");
 		} catch {
-		
 			setError("Failed to create an account");
-		
 			return
 		}
 			setOpenSD(false);
-		setLoading(false);
 	}
 
 	const handleClick = (event) => {
@@ -334,9 +325,6 @@ export default function LoginSignUp() {
 	return (
 		<div>
 			<Button
-				//   aria-controls="customized-menu"
-				//   aria-haspopup="true"
-				// variant="contained"
 				color="primary"
 				variant="outlined"
 				size="small"

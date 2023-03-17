@@ -114,10 +114,10 @@ export default function Basket() {
 											title={card.strDrink}
 										/>
 										<CardContent className={classes.cardContent}>
-											<Typography color="secondary" gutterBottom variant="h5" component="h2">
+											<Typography gutterBottom variant="h5" component="h2">
 												{card.strDrink}{" "}
 												{card.strDrink.endsWith("DOUBLE") && (
-													<Typography>with extra {card.strIngredient1}</Typography>
+													<Typography color="secondary">with extra {card.strIngredient1}</Typography>
 												)}
 											</Typography>
 											<Typography>{card.strCategory}</Typography>
