@@ -5,7 +5,7 @@ import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import THEMES from "../consts/THEMES";
-import { readOnceGet, updateAsync, removeAsync } from "../firebase/crudoperations";
+import { updateAsync, removeAsync } from "../firebase/crudoperations";
 import { MainContext } from "../context/MainContext";
 import ShopIcon from "@material-ui/icons/Shop";
 import RemoveShoppingCartOutlinedIcon from "@material-ui/icons/RemoveShoppingCartOutlined";
@@ -18,12 +18,6 @@ export default function Basket() {
 	const { cart, setCart, cartQty, setCartQty, getCart, onAdd } = useContext(CartContext);
 	const navigate = useNavigate();
 
-	const addItemToCart = async (card) => {
-		await onAdd(card, undefined, cart);
-		const cartData = await readOnceGet(`users/${currentUser.uid}/orders`);
-		setCart(cartData || {});
-	};
-
 	const removeItemFromCart = async (card) => {
 		const item = Object.entries(cart).find((e) => e[1].order.idDrink === card.idDrink);
 		item[1].quantity <= 1
@@ -31,10 +25,7 @@ export default function Basket() {
 			: await updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {
 					quantity: --item[1].quantity,
 			  });
-
-		const cartData = await readOnceGet(`users/${currentUser.uid}/orders`);
-		setCart(cartData || {});
-		setCartQty((qty) => --qty);
+			await getCart();
 	};
 
 	function clearAll() {
@@ -144,7 +135,7 @@ export default function Basket() {
 											</Button>
 											<Typography style={{ color: "green" }}>{" " + qty + " "}</Typography>
 											<Button
-												onClick={() => addItemToCart(card)}
+												onClick={() => onAdd(card, undefined, cart)}
 												size="small"
 												color="primary"
 												variant="outlined"

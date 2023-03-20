@@ -27,9 +27,9 @@ export const readOnValue = (
   return result;
 };
 
-export function readOnceGet(path, callBackSuccess, callBackError, args = {}) {
+export async function readOnceGet(path, callBackSuccess, callBackError, args = {}) {
   const reference = ref(db, path);
-  return get(reference, args)
+  return await get(reference, args)
     .then((snapshot) => {
       if (snapshot.exists()) {
         return callBackSuccess
@@ -77,7 +77,7 @@ export const write = (
     });
 };
 
-export const writeAsync = (
+export const writeAsync = async (
   path,
   data,
   callBackSuccess,
@@ -85,8 +85,8 @@ export const writeAsync = (
   args = {}
 ) => {
   const reference = ref(db, path);
-  let key = push(reference);
-  set(key, data)
+  let key = await push(reference);
+  await set(key, data)
     .then((value) => {
       callBackSuccess && callBackSuccess(data, args);
     })

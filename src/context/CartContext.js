@@ -8,17 +8,17 @@ export const CartProvider = (props) => {
 	const [cart, setCart] = useState({});
 	const { currentUser } = useContext(MainContext);
 	const [cartQty, setCartQty] = useState(null);
+	const [loading, setLoading] = useState(false);
 
 	function countCartQuantity(data) {
-		return Object.values(data).reduce((amount, cocktail) => amount + cocktail.quantity, 0);
+		return data ? Object.values(data).reduce((amount, cocktail) => amount + cocktail.quantity, 0) : 0;
 	}
 
-	function getCart() {
+	async function getCart() {
 		if (currentUser) {
-			readOnceGet(`users/${currentUser.uid}/orders`, (items) => {
-				setCart(items || {});
-				setCartQty(countCartQuantity(items));
-			});
+			const cartItems = await readOnceGet(`users/${currentUser.uid}/orders`);
+			setCart(cartItems || {});
+			setCartQty(countCartQuantity(cartItems));
 		}
 	}
 
@@ -27,22 +27,24 @@ export const CartProvider = (props) => {
 	}, [currentUser]);
 
 	async function onAdd(card, func, cart) {
-		if (currentUser) {
+		if (currentUser && !loading) {
+			setLoading(true);
 			const items = cart || (await readOnceGet(`users/${currentUser.uid}/orders`));
 			const item =
 				items &&
 				Object.entries(items).find(
-					(cocktail) => cocktail[1].order.idDrink === (func ? func(card).idDrink : card.idDrink)
+					(cocktail) => cocktail[1].order.idDrink === (func ? func(card).idDrink : card?.idDrink)
 				);
 			!item
-				? writeAsync(`users/${currentUser.uid}/orders`, {
+				? await writeAsync(`users/${currentUser.uid}/orders`, {
 						order: func ? func(card) : card,
 						quantity: 1,
 				  })
 				: await updateAsync(`users/${currentUser.uid}/orders/${item[0]}`, {
 						quantity: ++item[1].quantity,
 				  });
-			setCartQty((qty) => ++qty);
+			setLoading(false);
+			await getCart();
 		}
 	};
 
