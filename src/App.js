@@ -1,5 +1,5 @@
 import Signup from "./components/Signup";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Auth from "./context/MainContext";
 import Login from "./components/Login";
 import ForgotPassWord from "./components/ForgotPassword";
@@ -10,27 +10,34 @@ import CocktailBuilder from "./components/CocktailBuilder";
 import Payment from "./components/Payment";
 import Home from "./components/Home";
 
-
 function App() {
+  const routes = [
+    { path: "/", element: <Home /> },
+    { path: "/update-profile", element: <UpdateProfile /> },
+    { path: "/signup", element: <Signup /> },
+    { path: "/login", element: <Login /> },
+    { path: "/forgot-password", element: <ForgotPassWord /> },
+    { path: "/shoping-card", element: <Basket /> },
+    { path: "/cocktail-builder", element: <CocktailBuilder /> },
+    { path: "/payment", element: <Payment /> },
+  ];
   return (
-		<BrowserRouter>
-			<Auth>
-				<CartProvider>
-					<Routes>
-						<Route exact path="/" element={<Home />} />
-						{/* <Route path="/!" element={<Demo />} /> */}
-						<Route path="/update-profile" element={<UpdateProfile />} />
-						<Route path="/signup" element={<Signup />} />
-						<Route path="/login" element={<Login />} />
-						<Route path="/forgot-password" element={<ForgotPassWord />} />
-						<Route path="/shoping-card" element={<Basket />} />
-						<Route path="/cocktail-builder" element={<CocktailBuilder />} />
-						<Route path="/payment" element={<Payment />} />
-					</Routes>
-				</CartProvider>
-			</Auth>
-		</BrowserRouter>
-	);
+    <BrowserRouter>
+      <Auth>
+        <CartProvider>
+          <Routes>
+            {routes.map((route, index) => (
+              <Route
+                key={index}
+                path={route.path}
+                element={route.element}
+              />
+            ))}
+          </Routes>
+        </CartProvider>
+      </Auth>
+    </BrowserRouter>
+  );
 }
 
 export default App;
