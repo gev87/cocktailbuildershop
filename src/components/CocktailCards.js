@@ -12,6 +12,7 @@ import { CartContext } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import LoginSignUp from "./LoginSignUp";
 import CardActionArea from "@material-ui/core/CardActionArea";
+import Pagination from '@material-ui/lab/Pagination';
 
 export default function CocktailCards() {
 	const classes = THEMES();
@@ -26,6 +27,16 @@ export default function CocktailCards() {
 	const [selectedItem, setSelectedItem] = useState("");
 	const [youtubeCocktails, setYoutubeCocktails] = useState([]);
 	const [clearFilters, setClearfilters] = useState(false);
+	const [currentPage, setCurrentPage] = useState(0);
+	const perPage = 12; // number of items per page
+	const [pages,setPages] = useState(0);
+	const [currentData,setCurrentData] = useState([]);
+
+
+
+	const handlePageChange = (page,value) => {
+			setCurrentPage(value);
+	};
 
 	const ingredientArray = (cocktail) => {
 		return Object.entries(cocktail).reduce((accum, ing) => {
@@ -39,6 +50,7 @@ export default function CocktailCards() {
 	};
 
 	const handleFilters = (filteredCocktails) => {
+		setPages(0);
 		setClearfilters(false);
 		setShow(filteredCocktails || data);
 		setHeader(
@@ -53,12 +65,11 @@ export default function CocktailCards() {
 	function showSearchResult(searchText) {
 		if (!searchText.length) {
 			showPopularCocktails();
-		} else {
-			setShow(
-				data.filter((item) =>
-					item.strDrink.trim().toLowerCase().includes(searchText.trim().toLowerCase())
-				)
-			);
+		} else {	
+			const searchResult = data.filter((item) =>
+				item.strDrink.trim().toLowerCase().includes(searchText.trim().toLowerCase())
+			)
+			setCurrentData(searchResult);
 			setClearfilters(true);
 			setHeader(
 				`Search result ${
@@ -70,11 +81,24 @@ export default function CocktailCards() {
 		}
 	}
 
+	function pagination(){	
+		const offset = currentPage * perPage;
+		const paginatedData = currentData.slice(offset, offset + perPage);
+		setPages(currentData.length/perPage > 1 ? Math.ceil(currentData.length/perPage): Math.floor(currentData.length/perPage));
+		setShow(paginatedData);
+	}
+	
 	useEffect(() => {
+ 	if (currentData.length){
+			pagination();
+		  } 
+	}, [ popularCocktails,currentPage,currentData]);
+
+	useEffect(()=>{
 		if (data.length) {
 			setShow(popularCocktails);
 		}
-	}, [data, popularCocktails]);
+	},[data])
 
 	useEffect(() => {
 		const allCocktails = localStorage.getItem("allCocktails");
@@ -241,6 +265,7 @@ export default function CocktailCards() {
 									</Grid>
 								))}
 						</Grid>
+						{{pages} &&<Pagination count={pages}  color="secondary" onChange={handlePageChange}/>}
 					</Container>
 					<ImgDialog
 						open={!!selectedItem}
